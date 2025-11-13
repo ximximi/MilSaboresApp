@@ -1,5 +1,6 @@
 package com.example.milsabores.di
 
+import com.example.milsabores.data.repository.CarritoRepository
 import com.example.milsabores.data.repository.ProductoRepository
 
 /**
@@ -8,5 +9,6 @@ import com.example.milsabores.data.repository.ProductoRepository
  */
 interface AppContainer {
     val productoRepository: ProductoRepository
+    val carritoRepository: CarritoRepository
     // Aquí añadiremos el CarritoRepository, UsuarioRepository, etc. más adelante
 }

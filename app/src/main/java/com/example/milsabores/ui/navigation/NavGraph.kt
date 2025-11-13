@@ -9,6 +9,9 @@ import androidx.navigation.compose.composable
 import com.example.milsabores.ui.screen.HomeScreen
 import com.example.milsabores.ui.screen.IndexScreen
 import com.example.milsabores.ui.screen.CatalogoScreen
+import com.example.milsabores.ui.screen.DetalleScreen
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 @Composable
 fun NavGraph(
@@ -69,6 +72,18 @@ fun NavGraph(
                     // Navegamos al detalle, pasando el ID del producto
                     navController.navigate(Rutas.irADetalle(productoId))
                 }
+            )
+        }
+
+        composable(
+            route = Rutas.DETALLE_PRODUCTO, // Ruta: "detalle_producto/{productoId}"
+            arguments = listOf(navArgument("productoId") { // 1. Define el argumento
+                type = NavType.IntType // 2. Dice que el ID es un número
+            })
+        ) {
+            // 3. El ViewModel se crea automáticamente con el ID
+            DetalleScreen(
+                onVolverClick = { navController.popBackStack() } // Vuelve a la pantalla anterior
             )
         }
 

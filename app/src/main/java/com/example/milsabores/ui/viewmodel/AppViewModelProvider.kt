@@ -37,6 +37,25 @@ object AppViewModelProvider {
                 productoRepository = productoRepository
             )
         }
+
+        initializer {
+            // 1. Obtenemos los repositorios que necesita
+            val productoRepository =
+                milSaboresApplication().container.productoRepository
+            val carritoRepository =
+                milSaboresApplication().container.carritoRepository
+
+            // 2. Obtenemos el SavedStateHandle (para el ID)
+            val savedStateHandle = createSavedStateHandle()
+
+            // 3. Creamos el DetalleViewModel
+            DetalleViewModel(
+                savedStateHandle = savedStateHandle,
+                productoRepository = productoRepository,
+                carritoRepository = carritoRepository
+            )
+        }
+
     }
 }
 
