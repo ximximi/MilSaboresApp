@@ -47,6 +47,7 @@ import com.example.milsabores.ui.components.ProductoCard
 fun HomeScreen(
     onVolverClick: () -> Unit,
     onCarritoClick: () -> Unit,
+    onVerCatalogoClick: () -> Unit,
     // 1. Pedimos el ViewModel. Usamos la Factory que creamos.
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -111,7 +112,7 @@ fun HomeScreen(
 
                 // --- ITEM 1: El Banner ---
                 item {
-                    BannerSection() // Este ya lo teníamos
+                    BannerSection(onVerCatalogoClick = onVerCatalogoClick)
                 }
 
                 // --- ITEM 2: Features (Placeholder) ---
@@ -185,7 +186,7 @@ fun HomeScreen(
 
 // --- Componente Privado para el Banner ---
 @Composable
-private fun BannerSection() {
+private fun BannerSection(onVerCatalogoClick: () -> Unit) {
     // Box nos permite poner elementos uno encima de otro
     Box(
         modifier = Modifier
@@ -197,7 +198,6 @@ private fun BannerSection() {
         // Ya no usamos AsyncImage, usamos Image
         Image(
             // painterResource carga tu imagen desde /res/drawable
-            // RECUERDA: cambia 'banner_pasteleria' por el nombre de tu archivo
             painter = painterResource(id = R.drawable.banner_pasteleria),
             contentDescription = "Banner principal",
             contentScale = ContentScale.Crop, // Rellena el espacio
@@ -212,7 +212,7 @@ private fun BannerSection() {
                 style = MaterialTheme.typography.headlineLarge,
                 color = Color.White // Forzamos color blanco para el banner
             )
-            Button(onClick = { /* Ir a catálogo */ }) {
+            Button(onClick = onVerCatalogoClick) {
                 Text("VER CATÁLOGO")
             }
         }
@@ -227,7 +227,8 @@ fun HomeScreenPreview() {
 
         HomeScreen(
             onVolverClick = {},
-            onCarritoClick = {}
+            onCarritoClick = {},
+            onVerCatalogoClick = {}
         )
     }
 }

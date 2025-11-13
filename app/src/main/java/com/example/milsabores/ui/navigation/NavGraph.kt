@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.milsabores.ui.screen.HomeScreen
 import com.example.milsabores.ui.screen.IndexScreen
+import com.example.milsabores.ui.screen.CatalogoScreen
 
 @Composable
 fun NavGraph(
@@ -39,7 +40,8 @@ fun NavGraph(
         composable(Rutas.HOME) {
             HomeScreen(
                 onVolverClick = { navController.popBackStack() }, // Vuelve a la pantalla anterior (Index)
-                onCarritoClick = { navController.navigate(Rutas.CARRITO) }
+                onCarritoClick = { navController.navigate(Rutas.CARRITO) },
+                onVerCatalogoClick = { navController.navigate(Rutas.CATALOGO) }
             )
         }
 
@@ -57,6 +59,17 @@ fun NavGraph(
 
         composable(Rutas.BLOG) {
             // BlogScreen(navController = navController)
+        }
+
+        composable(Rutas.CATALOGO) {
+            CatalogoScreen(
+                onVolverClick = { navController.popBackStack() },
+                onCarritoClick = { navController.navigate(Rutas.CARRITO) },
+                onProductoClick = { productoId ->
+                    // Navegamos al detalle, pasando el ID del producto
+                    navController.navigate(Rutas.irADetalle(productoId))
+                }
+            )
         }
 
         // --- RUTAS DE AUTENTICACIÓN ---

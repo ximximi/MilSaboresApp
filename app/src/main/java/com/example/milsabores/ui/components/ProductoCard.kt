@@ -64,8 +64,6 @@ fun ProductoCard(
                 // Row {
                 //     Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 // }
-
-                // --- TRADUCCIÓN de <h3> ---
                 Text(
                     text = producto.nombre,
                     style = MaterialTheme.typography.titleMedium, // Fuente Lato Bold (por defecto)
@@ -73,12 +71,11 @@ fun ProductoCard(
                     maxLines = 1, // Solo una línea
                     overflow = TextOverflow.Ellipsis // Pone "..." si es muy largo
                 )
-
                 // --- TRADUCCIÓN de <p class="price"> ---
                 Text(
                     text = "$${producto.precio}", // Formato de precio
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary // Color Rosa
+                    color = MaterialTheme.colorScheme.secondary // Color Rosa
                 )
             }
         }

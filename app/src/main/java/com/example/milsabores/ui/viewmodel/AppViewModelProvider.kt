@@ -27,8 +27,16 @@ object AppViewModelProvider {
         }
 
         // --- AQUÍ AÑADIREMOS MÁS INICIALIZADORES ---
-        // (Por ejemplo, para CarritoViewModel, LoginViewModel, etc.)
+        initializer {
+            // 1. Obtenemos el mismo repositorio
+            val productoRepository =
+                milSaboresApplication().container.productoRepository
 
+            // 2. Creamos el CatalogoViewModel
+            CatalogoViewModel(
+                productoRepository = productoRepository
+            )
+        }
     }
 }
 
