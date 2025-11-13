@@ -4,39 +4,61 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.example.milsabores.ui.screen.BlogScreen
+import com.example.milsabores.ui.screen.CatalogoScreen
+import com.example.milsabores.ui.screen.DetalleScreen
 import com.example.milsabores.ui.screen.HomeScreen
 import com.example.milsabores.ui.screen.IndexScreen
-import com.example.milsabores.ui.screen.BlogScreen
 
 @Composable
 fun NavGraph(
     navController: NavHostController
 ) {
-    // NavHost es el componente que intercambia las pantallas
     NavHost(
         navController = navController,
-        startDestination = Rutas.INDEX // La app parte en la pantalla de bienvenida
+        startDestination = Rutas.INDEX
     ) {
 
         // --- RUTAS DE CLIENTE ---
-
         composable(Rutas.INDEX) {
             IndexScreen(
-                // Le decimos qué hacer al hacer clic en "Entrar"
                 onEntrarClick = { navController.navigate(Rutas.HOME) },
-
-                // Le decimos qué hacer al hacer clic en "Admin"
                 onAdminClick = { navController.navigate(Rutas.ADMIN_LOGIN) }
             )
         }
 
         composable(Rutas.HOME) {
             HomeScreen(
-                onVolverClick = { navController.popBackStack() }, // Vuelve a la pantalla anterior (Index)
+                onVolverClick = { navController.popBackStack() },
                 onCarritoClick = { navController.navigate(Rutas.CARRITO) },
                 onVerCatalogoClick = { navController.navigate(Rutas.CATALOGO) }
+            )
+        }
+
+        // --- De la rama 'catalogo' ---
+        composable(Rutas.CATALOGO) {
+            CatalogoScreen(
+                onVolverClick = { navController.popBackStack() },
+                onCarritoClick = { navController.navigate(Rutas.CARRITO) },
+                onProductoClick = { productoId ->
+                    navController.navigate(Rutas.irADetalle(productoId))
+                }
+            )
+        }
+
+        // --- De la rama 'catalogo' ---
+        composable(
+            route = Rutas.DETALLE_PRODUCTO,
+            arguments = listOf(navArgument("productoId") {
+                type = NavType.IntType
+            })
+        ) {
+            DetalleScreen(
+                onVolverClick = { navController.popBackStack() }
             )
         }
 
@@ -45,13 +67,14 @@ fun NavGraph(
         }
 
         composable(Rutas.CHECKOUT) {
-            // CheckoutScreen(navController = navController)
+            // ...
         }
 
         composable(Rutas.CONFIRMACION) {
-            // ConfirmacionScreen(navController = navController)
+            // ...
         }
 
+        // --- De la rama 'blog' ---
         composable(Rutas.BLOG) {
             BlogScreen(
                 onVolverClick = { navController.popBackStack() }
@@ -59,21 +82,17 @@ fun NavGraph(
         }
 
         // --- RUTAS DE AUTENTICACIÓN ---
-
         composable(Rutas.LOGIN) {
-            // LoginScreen(navController = navController)
+            // ...
         }
         composable(Rutas.ADMIN_LOGIN) {
-            // Aquí irá tu LoginAdminScreen
-            Text("Pantalla de Login de Admin (en construcción)",
-                color = MaterialTheme.colorScheme.primary)
+            Text(
+                "Pantalla de Login de Admin (en construcción)",
+                color = MaterialTheme.colorScheme.primary
+            )
         }
         composable(Rutas.REGISTRO) {
-            // RegistroScreen(navController = navController)
+            // ...
         }
-
-        // --- RUTAS DE ADMIN ---
-        // (Añadiremos estas más adelante)
-
     }
 }

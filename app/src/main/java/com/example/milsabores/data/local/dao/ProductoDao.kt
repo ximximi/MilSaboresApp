@@ -23,4 +23,8 @@ interface ProductoDao {
     // Obtiene un producto específico por su ID
     @Query("SELECT * FROM productos WHERE id = :productoId")
     fun obtenerPorId(productoId: Int): Flow<Producto>
+
+    // Obtiene solo los productos de una categoría específica
+    @Query("SELECT * FROM productos WHERE categoria = :categoria")
+    fun obtenerPorCategoria(categoria: String): Flow<List<Producto>>
 }

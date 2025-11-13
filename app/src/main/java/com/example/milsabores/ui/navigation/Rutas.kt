@@ -10,6 +10,7 @@ object Rutas {
     const val CHECKOUT = "checkout" // (checkout.html)
     const val CONFIRMACION = "confirmacion" // (confirmacion.html)
     const val BLOG = "blog" // (blog.html)
+    const val CATALOGO = "catalogo"
 
     // Rutas de Autenticación
     const val LOGIN = "login" // (login.html)

@@ -21,4 +21,9 @@ class ProductoRepositoryImpl(
     override fun obtenerPorId(id: Int): Flow<Producto> {
         return dao.obtenerPorId(id)
     }
+
+    override fun obtenerPorCategoria(categoria: String): Flow<List<Producto>> {
+        // Simplemente llamamos al nuevo método del DAO
+        return dao.obtenerPorCategoria(categoria)
+    }
 }

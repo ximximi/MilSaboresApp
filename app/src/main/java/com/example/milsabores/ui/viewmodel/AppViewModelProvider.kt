@@ -7,45 +7,51 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.milsabores.MilSaboresApplication
 
-/**
- * Esta es nuestra Fábrica (Factory) personalizada para TODOS los ViewModels de la app.
- */
 object AppViewModelProvider {
     val Factory = viewModelFactory {
 
-        // --- AÑADIMOS UN "INICIALIZADOR" PARA HomeViewModel ---
-        // Le dice a la app: "Cuando alguien pida un HomeViewModel..."
+        // --- De la rama 'main' (HomeScreen) ---
         initializer {
-            // 1. Obtén el repositorio de productos
             val productoRepository =
                 milSaboresApplication().container.productoRepository
-
-            // 2. Crea y devuelve el HomeViewModel, pasándole el repositorio
             HomeViewModel(
                 productoRepository = productoRepository
             )
         }
 
+        // --- De la rama 'catalogo' ---
         initializer {
-            // 1. Obtenemos el repositorio del blog
+            val productoRepository =
+                milSaboresApplication().container.productoRepository
+            CatalogoViewModel(
+                productoRepository = productoRepository
+            )
+        }
+
+        // --- De la rama 'catalogo' ---
+        initializer {
+            val productoRepository =
+                milSaboresApplication().container.productoRepository
+            val carritoRepository =
+                milSaboresApplication().container.carritoRepository
+            val savedStateHandle = createSavedStateHandle()
+            DetalleViewModel(
+                savedStateHandle = savedStateHandle,
+                productoRepository = productoRepository,
+                carritoRepository = carritoRepository
+            )
+        }
+
+        // --- De la rama 'blog' ---
+        initializer {
             val blogRepository =
                 milSaboresApplication().container.blogRepository
-
-            // 2. Creamos el BlogViewModel
             BlogViewModel(
                 blogRepository = blogRepository
             )
         }
-
-        // --- AQUÍ AÑADIREMOS MÁS INICIALIZADORES ---
-        // (Por ejemplo, para CarritoViewModel, LoginViewModel, etc.)
-
     }
 }
 
-/**
- * Función de extensión para obtener la instancia de nuestra Application
- * desde dentro de la fábrica.
- */
 fun CreationExtras.milSaboresApplication(): MilSaboresApplication =
     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as MilSaboresApplication)

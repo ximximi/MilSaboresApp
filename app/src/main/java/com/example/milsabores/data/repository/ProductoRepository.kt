@@ -14,4 +14,6 @@ interface ProductoRepository {
 
     // Contrato: "Cualquiera que me use, puede pedirme un producto por su ID"
     fun obtenerPorId(id: Int): Flow<Producto>
+
+    fun obtenerPorCategoria(categoria: String): Flow<List<Producto>>
 }
