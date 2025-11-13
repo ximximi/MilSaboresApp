@@ -26,6 +26,17 @@ object AppViewModelProvider {
             )
         }
 
+        initializer {
+            // 1. Obtenemos el repositorio del blog
+            val blogRepository =
+                milSaboresApplication().container.blogRepository
+
+            // 2. Creamos el BlogViewModel
+            BlogViewModel(
+                blogRepository = blogRepository
+            )
+        }
+
         // --- AQUÍ AÑADIREMOS MÁS INICIALIZADORES ---
         // (Por ejemplo, para CarritoViewModel, LoginViewModel, etc.)
 

@@ -4,6 +4,9 @@ import android.content.Context
 import com.example.milsabores.data.local.PasteleriaDatabase
 import com.example.milsabores.data.repository.ProductoRepository
 import com.example.milsabores.data.repository.ProductoRepositoryImpl
+import com.example.milsabores.data.repository.BlogRepository
+import com.example.milsabores.data.repository.BlogRepositoryImpl
+
 
 /**
  * Implementación del contenedor. Sabe CÓMO construir los repositorios.
@@ -21,5 +24,9 @@ class AppDataContainer(
     // dándole el DAO que saca de la base de datos.
     override val productoRepository: ProductoRepository by lazy {
         ProductoRepositoryImpl(database.productoDao())
+    }
+
+    override val blogRepository: BlogRepository by lazy {
+        BlogRepositoryImpl(database.blogDao())
     }
 }

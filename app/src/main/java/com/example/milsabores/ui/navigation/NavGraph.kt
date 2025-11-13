@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.milsabores.ui.screen.HomeScreen
 import com.example.milsabores.ui.screen.IndexScreen
+import com.example.milsabores.ui.screen.BlogScreen
 
 @Composable
 fun NavGraph(
@@ -56,7 +57,9 @@ fun NavGraph(
         }
 
         composable(Rutas.BLOG) {
-            // BlogScreen(navController = navController)
+            BlogScreen(
+                onVolverClick = { navController.popBackStack() }
+            )
         }
 
         // --- RUTAS DE AUTENTICACIÓN ---
