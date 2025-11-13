@@ -15,5 +15,7 @@ interface CarritoRepository {
 
     suspend fun eliminarDelCarrito(productoId: Int)
 
+    suspend fun limpiarCarrito()
+
     // (Añadiremos más después, como 'actualizarCantidad')
 }

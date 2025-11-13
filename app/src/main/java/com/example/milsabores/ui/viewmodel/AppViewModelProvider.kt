@@ -53,6 +53,20 @@ object AppViewModelProvider {
                 blogRepository = blogRepository
             )
         }
+        //Carrito
+        initializer {
+            // 1. Obtenemos los DOS repositorios que necesita
+            val productoRepository =
+                milSaboresApplication().container.productoRepository
+            val carritoRepository =
+                milSaboresApplication().container.carritoRepository
+
+            // 2. Creamos el CarritoViewModel
+            CarritoViewModel(
+                productoRepository = productoRepository,
+                carritoRepository = carritoRepository
+            )
+        }
     }
 }
 

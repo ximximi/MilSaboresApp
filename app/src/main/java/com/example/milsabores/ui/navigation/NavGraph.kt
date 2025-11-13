@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.milsabores.ui.screen.CarritoScreen
 import com.example.milsabores.ui.screen.BlogScreen
 import com.example.milsabores.ui.screen.CatalogoScreen
 import com.example.milsabores.ui.screen.DetalleScreen
@@ -36,7 +37,10 @@ fun NavGraph(
                 onVolverClick = { navController.popBackStack() },
                 onCarritoClick = { navController.navigate(Rutas.CARRITO) },
                 onVerCatalogoClick = { navController.navigate(Rutas.CATALOGO) },
-                onBlogClick = { navController.navigate(Rutas.BLOG) }
+                onBlogClick = { navController.navigate(Rutas.BLOG) },
+                onProductoClick = { productoId ->
+                    navController.navigate(Rutas.irADetalle(productoId))
+                }
             )
         }
 
@@ -64,11 +68,15 @@ fun NavGraph(
         }
 
         composable(Rutas.CARRITO) {
-            Text("Pantalla de Carrito (en construcción)")
+            CarritoScreen(
+                onVolverClick = { navController.popBackStack() },
+                onIrAPagarClick = { navController.navigate(Rutas.CHECKOUT) } // Navega al Checkout
+            )
         }
 
         composable(Rutas.CHECKOUT) {
-            // ...
+            // Placeholder temporal
+            Text("Pantalla de Checkout (en construcción)")
         }
 
         composable(Rutas.CONFIRMACION) {

@@ -42,4 +42,7 @@ class CarritoRepositoryImpl(
             dao.eliminar(itemExistente)
         }
     }
+    override suspend fun limpiarCarrito() {
+        dao.limpiarCarrito()
+    }
 }
