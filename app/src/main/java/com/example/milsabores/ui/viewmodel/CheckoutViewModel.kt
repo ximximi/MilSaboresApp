@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.milsabores.data.repository.CarritoRepository
 import com.example.milsabores.data.repository.ProductoRepository
+import com.example.milsabores.di.AppContainer
+import com.example.milsabores.data.local.crearDatosCompra
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +19,8 @@ private const val ENVIO_GRATIS_MINIMO = 50000.0
 
 class CheckoutViewModel(
     private val carritoRepository: CarritoRepository,
-    private val productoRepository: ProductoRepository
+    private val productoRepository: ProductoRepository,
+    private val appContainer: AppContainer
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CheckoutUiState())
@@ -101,14 +104,19 @@ class CheckoutViewModel(
     fun onPagarClick() {
         if (validarFormulario()) {
             _uiState.update { it.copy(estaProcesando = true) }
+            // 1. Genera y guarda los datos de la compra
+            val datosCompra = crearDatosCompra(_uiState.value)
+            appContainer.ultimaCompra = datosCompra
+            // --------------------------
             viewModelScope.launch {
+                // 2. Limpia el carrito
                 carritoRepository.limpiarCarrito()
+                // 3. Navega a la confirmación
                 _uiState.update { it.copy(estaProcesando = false, pagoExitoso = true) }
             }
         }
     }
-
-    // --- Funciones de Validación (Traducción directa de tu .js) ---
+    // --- Funciones de Validación --
 
     private fun validarLuhn(numero: String): Boolean {
         if (numero.length != 16 || numero.any { !it.isDigit() }) return false

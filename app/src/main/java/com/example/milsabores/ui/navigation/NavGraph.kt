@@ -12,6 +12,7 @@ import com.example.milsabores.ui.screen.CarritoScreen
 import com.example.milsabores.ui.screen.BlogScreen
 import com.example.milsabores.ui.screen.CatalogoScreen
 import com.example.milsabores.ui.screen.CheckoutScreen
+import com.example.milsabores.ui.screen.ConfirmacionScreen
 import com.example.milsabores.ui.screen.DetalleScreen
 import com.example.milsabores.ui.screen.HomeScreen
 import com.example.milsabores.ui.screen.IndexScreen
@@ -88,8 +89,20 @@ fun NavGraph(
         }
 
         composable(Rutas.CONFIRMACION) {
-            // Placeholder temporal
-            Text("¡Pago Exitoso! Pantalla de Confirmación (en construcción)")
+            ConfirmacionScreen(
+                onVolverAlInicioClick = {
+                    // Navega al inicio y limpia TODA la pila de navegación
+                    navController.navigate(Rutas.INDEX) {
+                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                    }
+                },
+                onSeguirComprandoClick = {
+                    // Navega al catálogo y limpia la pila de "compra"
+                    navController.navigate(Rutas.CATALOGO) {
+                        popUpTo(Rutas.HOME) { inclusive = false }
+                    }
+                }
+            )
         }
 
         // --- De la rama 'blog' ---

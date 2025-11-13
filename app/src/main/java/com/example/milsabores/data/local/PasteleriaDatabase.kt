@@ -20,7 +20,7 @@ import org.json.JSONObject
 
 @Database(
     entities = [Producto::class, Usuario::class, Blog::class, ItemCarrito::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class PasteleriaDatabase : RoomDatabase() {
@@ -117,10 +117,13 @@ private class DatabaseCallback(
                 listaBlog.add(
                     Blog(
                         id = b.getInt("id"),
+                        categoria = b.getString("categoria"), // <-- NUEVO
                         titulo = b.getString("titulo"),
-                        fecha = b.getString("fecha"),
                         resumen = b.getString("resumen"),
-                        imagen = b.getString("imagen")
+                        fecha = b.getString("fecha"),
+                        autor = b.getString("autor"), // <-- NUEVO
+                        imagen = b.getString("imagen"),
+                        contenido = b.getString("contenido") // <-- NUEVO
                     )
                 )
             }

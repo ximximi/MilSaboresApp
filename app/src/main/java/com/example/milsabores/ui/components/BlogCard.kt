@@ -32,7 +32,10 @@ fun BlogCard(
         modifier = Modifier
             .fillMaxWidth() // La tarjeta ocupará todo el ancho
             .padding(vertical = 8.dp, horizontal = 16.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background
+        )
     ) {
         Column {
             // --- Imagen del Blog ---

@@ -1,6 +1,7 @@
 package com.example.milsabores.di
 
 import android.content.Context
+import com.example.milsabores.data.local.DatosCompra
 import com.example.milsabores.data.local.PasteleriaDatabase
 import com.example.milsabores.data.repository.BlogRepository
 import com.example.milsabores.data.repository.BlogRepositoryImpl
@@ -30,4 +31,6 @@ class AppDataContainer(
     override val blogRepository: BlogRepository by lazy {
         BlogRepositoryImpl(database.blogDao())
     }
+
+    override var ultimaCompra: DatosCompra? = null
 }

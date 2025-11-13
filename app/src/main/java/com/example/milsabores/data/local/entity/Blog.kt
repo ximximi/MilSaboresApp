@@ -6,8 +6,11 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "blog")
 data class Blog(
     @PrimaryKey val id: Int,
+    val categoria: String,
     val titulo: String,
-    val fecha: String,
     val resumen: String,
-    val imagen: String
+    val fecha: String,
+    val autor: String,
+    val imagen: String,
+    val contenido: String
 )
