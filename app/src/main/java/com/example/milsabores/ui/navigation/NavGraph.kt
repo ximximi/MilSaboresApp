@@ -35,7 +35,8 @@ fun NavGraph(
             HomeScreen(
                 onVolverClick = { navController.popBackStack() },
                 onCarritoClick = { navController.navigate(Rutas.CARRITO) },
-                onVerCatalogoClick = { navController.navigate(Rutas.CATALOGO) }
+                onVerCatalogoClick = { navController.navigate(Rutas.CATALOGO) },
+                onBlogClick = { navController.navigate(Rutas.BLOG) }
             )
         }
 

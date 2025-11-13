@@ -14,8 +14,11 @@ object AppViewModelProvider {
         initializer {
             val productoRepository =
                 milSaboresApplication().container.productoRepository
+            val blogRepository =
+                milSaboresApplication().container.blogRepository
             HomeViewModel(
-                productoRepository = productoRepository
+                productoRepository = productoRepository,
+                blogRepository = blogRepository
             )
         }
 

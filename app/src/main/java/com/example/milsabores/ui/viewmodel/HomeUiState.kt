@@ -1,5 +1,6 @@
 package com.example.milsabores.ui.viewmodel
 
+import com.example.milsabores.data.local.entity.Blog
 import com.example.milsabores.data.local.entity.Producto
 
 /**
@@ -7,6 +8,7 @@ import com.example.milsabores.data.local.entity.Producto
  */
 data class HomeUiState(
     val estaCargando: Boolean = true,
-    val productos: List<Producto> = emptyList(), // La lista de productos
-    val error: String? = null // Un mensaje de error si algo falla
+    val productos: List<Producto> = emptyList(),
+    val entradasBlog: List<Blog> = emptyList(),
+    val error: String? = null
 )
