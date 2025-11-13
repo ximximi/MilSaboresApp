@@ -23,7 +23,6 @@ fun NavGraph(
         // --- RUTAS DE CLIENTE ---
 
         composable(Rutas.INDEX) {
-            // ¡Esta ruta ahora está activa!
             IndexScreen(
                 // Le decimos qué hacer al hacer clic en "Entrar"
                 onEntrarClick = { navController.navigate(Rutas.HOME) },
@@ -34,13 +33,10 @@ fun NavGraph(
         }
 
         composable(Rutas.HOME) {
-            // HomeScreen(navController = navController) // <-- Lo activaremos luego
-        }
-
-        composable(Rutas.HOME) {
             HomeScreen(
                 onVolverClick = { navController.popBackStack() }, // Vuelve a la pantalla anterior (Index)
-                onCarritoClick = { navController.navigate(Rutas.CARRITO) }
+                onCarritoClick = { navController.navigate(Rutas.CARRITO) },
+                onVerCatalogoClick = { navController.navigate(Rutas.CATALOGO) }
             )
         }
 

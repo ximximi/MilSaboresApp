@@ -1,6 +1,7 @@
 package com.example.milsabores.ui.screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,6 +11,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.DateRange
+import com.example.milsabores.ui.components.FeatureCard
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -42,11 +48,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.milsabores.ui.viewmodel.AppViewModelProvider
 import com.example.milsabores.ui.viewmodel.HomeViewModel
 import com.example.milsabores.ui.components.ProductoCard
+import com.example.milsabores.ui.components.CategoriaCard
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onVolverClick: () -> Unit,
     onCarritoClick: () -> Unit,
+    onVerCatalogoClick: () -> Unit,
     // 1. Pedimos el ViewModel. Usamos la Factory que creamos.
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -122,9 +130,31 @@ fun HomeScreen(
                         modifier = Modifier.padding(16.dp)
                     )
                     LazyRow(
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp) // Espacio entre items
                     ) {
-                        item { Text("Garantía de frescura...") }
+                        // Traducción de tu <div class="card-feature">
+                        item {
+                            FeatureCard(
+                                icono = Icons.Default.ThumbUp, // (Cambiamos el ícono de FontAwesome)
+                                titulo = "Garantía de frescura",
+                                descripcion = "100% productos frescos"
+                            )
+                        }
+                        item {
+                            FeatureCard(
+                                icono = Icons.Default.Info, // (Ícono de ejemplo)
+                                titulo = "Personalización",
+                                descripcion = "Diseños únicos"
+                            )
+                        }
+                        item {
+                            FeatureCard(
+                                icono = Icons.Default.Phone, // (Ícono de ejemplo)
+                                titulo = "Atención 24/7",
+                                descripcion = "Contáctanos"
+                            )
+                        }
                     }
                 }
 
@@ -136,9 +166,29 @@ fun HomeScreen(
                         modifier = Modifier.padding(16.dp)
                     )
                     LazyRow(
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
                     ) {
-                        // (Aquí irán tus "CategoriaCards")
+                        item {
+                            CategoriaCard(
+                                titulo = "Tortas",
+                                imageName = "categoria_tortas.jpg", // ¡Usa el nombre de tu imagen!
+                                onClick = onVerCatalogoClick // Reutilizamos la navegación al catálogo
+                            )
+                        }
+                        item {
+                            CategoriaCard(
+                                titulo = "Postres",
+                                imageName = "categoria_postres.jpg", // ¡Usa el nombre de tu imagen!
+                                onClick = onVerCatalogoClick
+                            )
+                        }
+                        item {
+                            CategoriaCard(
+                                titulo = "Especiales",
+                                imageName = "categoria_especiales.jpg", // ¡Usa el nombre de tu imagen!
+                                onClick = onVerCatalogoClick
+                            )
+                        }
                     }
                 }
 
@@ -227,7 +277,8 @@ fun HomeScreenPreview() {
 
         HomeScreen(
             onVolverClick = {},
-            onCarritoClick = {}
+            onCarritoClick = {},
+            onVerCatalogoClick = {}
         )
     }
 }
