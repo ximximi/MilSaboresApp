@@ -67,6 +67,19 @@ object AppViewModelProvider {
                 carritoRepository = carritoRepository
             )
         }
+        initializer {
+            // 1. Obtenemos los repositorios que necesita
+            val carritoRepository =
+                milSaboresApplication().container.carritoRepository
+            val productoRepository =
+                milSaboresApplication().container.productoRepository // <-- ¡AÑADE ESTO!
+
+            // 2. Creamos el CheckoutViewModel
+            CheckoutViewModel(
+                carritoRepository = carritoRepository,
+                productoRepository = productoRepository // <-- ¡AÑADE ESTO!
+            )
+        }
     }
 }
 

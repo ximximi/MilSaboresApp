@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.example.milsabores.ui.screen.CarritoScreen
 import com.example.milsabores.ui.screen.BlogScreen
 import com.example.milsabores.ui.screen.CatalogoScreen
+import com.example.milsabores.ui.screen.CheckoutScreen
 import com.example.milsabores.ui.screen.DetalleScreen
 import com.example.milsabores.ui.screen.HomeScreen
 import com.example.milsabores.ui.screen.IndexScreen
@@ -75,12 +76,20 @@ fun NavGraph(
         }
 
         composable(Rutas.CHECKOUT) {
-            // Placeholder temporal
-            Text("Pantalla de Checkout (en construcción)")
+            CheckoutScreen(
+                onVolverClick = { navController.popBackStack() },
+                onPagoExitoso = {
+                    // Navega a la confirmación y limpia toda la pila de "compra"
+                    navController.navigate(Rutas.CONFIRMACION) {
+                        popUpTo(Rutas.HOME) { inclusive = false }
+                    }
+                }
+            )
         }
 
         composable(Rutas.CONFIRMACION) {
-            // ...
+            // Placeholder temporal
+            Text("¡Pago Exitoso! Pantalla de Confirmación (en construcción)")
         }
 
         // --- De la rama 'blog' ---

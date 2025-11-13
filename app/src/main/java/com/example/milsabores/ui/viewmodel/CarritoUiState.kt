@@ -3,14 +3,6 @@ package com.example.milsabores.ui.viewmodel
 import com.example.milsabores.data.local.entity.Producto
 
 /**
- * Clase especial para guardar el item del carrito CON sus detalles de producto.
- */
-data class ItemCarritoDetallado(
-    val producto: Producto,
-    val cantidad: Int
-)
-
-/**
  * Representa el estado de la pantalla CarritoScreen.
  */
 data class CarritoUiState(
