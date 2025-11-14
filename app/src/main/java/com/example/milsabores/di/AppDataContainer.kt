@@ -9,6 +9,8 @@ import com.example.milsabores.data.repository.CarritoRepository
 import com.example.milsabores.data.repository.CarritoRepositoryImpl
 import com.example.milsabores.data.repository.ProductoRepository
 import com.example.milsabores.data.repository.ProductoRepositoryImpl
+import com.example.milsabores.data.repository.UsuarioRepository
+import com.example.milsabores.data.repository.UsuarioRepositoryImpl
 
 class AppDataContainer(
     private val context: Context
@@ -33,4 +35,11 @@ class AppDataContainer(
     }
 
     override var ultimaCompra: DatosCompra? = null
+
+
+    // Construye el repositorio de usuarios,
+    // dándole el DAO que saca de la base de datos.
+    override val usuarioRepository: UsuarioRepository by lazy {
+        UsuarioRepositoryImpl(database.usuarioDao())
+    }
 }

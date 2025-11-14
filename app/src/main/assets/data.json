@@ -4,13 +4,22 @@
       "id": 1,
       "email": "admin@milsabores.cl",
       "password": "admin123",
-      "rol": "admin"
+      "nombre": "Administrador",
+      "direccion": "Av. Principal 123"
     },
     {
       "id": 2,
       "email": "cliente@gmail.com",
       "password": "cliente123",
-      "rol": "cliente"
+      "nombre": "Cliente de Prueba",
+      "direccion": null
+    },
+    {
+      "id": 3,
+      "email": "ximena@milsabores.cl",
+      "password": "123456",
+      "nombre": "Ximena (Test)",
+      "direccion": "Calle Falsa 456"
     }
   ],
   "blog": [

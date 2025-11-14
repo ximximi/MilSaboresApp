@@ -66,7 +66,7 @@ fun IndexScreen(
                     .fillMaxWidth()
                     .height(56.dp)
             ){
-                Text("ENTRAR A LA TIENDA")
+                Text("Ver Tienda")
             }
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -74,7 +74,7 @@ fun IndexScreen(
                 onClick = onAdminClick,
                 modifier = Modifier.fillMaxWidth()
             ){
-                Text("Acceso Administrador")
+                Text("Iniciar Sesión")
             }
         }
     }

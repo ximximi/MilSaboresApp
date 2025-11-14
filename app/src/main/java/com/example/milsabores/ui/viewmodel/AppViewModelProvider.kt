@@ -88,6 +88,30 @@ object AppViewModelProvider {
                 appContainer = container
             )
         }
+
+        initializer {
+            // 1. Obtén el repositorio de usuarios (¡el que acabamos de añadir!)
+            val usuarioRepository =
+                milSaboresApplication().container.usuarioRepository
+
+            // 2. Crea y devuelve el LoginViewModel, pasándole el repositorio
+            LoginViewModel(
+                usuarioRepository = usuarioRepository
+            )
+        }
+
+        // --- REGISTRO ---
+        initializer {
+            // 1. Obtén el repositorio de usuarios (el mismo que usa Login)
+            val usuarioRepository =
+                milSaboresApplication().container.usuarioRepository
+
+            // 2. Crea y devuelve el RegistroViewModel
+            // (¡Saldrá en ROJO! Lo crearemos en el Paso 2)
+            RegistroViewModel(
+                usuarioRepository = usuarioRepository
+            )
+        }
     }
 }
 

@@ -26,7 +26,11 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
 
                     // 2. Llamamos a nuestro NavGraph (el mapa)
-                    NavGraph(navController = navController)
+                    // --- ¡¡AQUÍ ESTÁ EL ARREGLO!! ---
+                    NavGraph(
+                        navController = navController,
+                        modifier = Modifier.fillMaxSize() // <-- ¡PASAMOS EL MODIFIER!
+                    )
                 }
             }
         }
