@@ -20,7 +20,7 @@ import org.json.JSONObject
 
 @Database(
     entities = [Producto::class, Usuario::class, Blog::class, ItemCarrito::class],
-    version = 2,
+    version = 2, // ¡Mantenemos tu versión 2!
     exportSchema = false
 )
 abstract class PasteleriaDatabase : RoomDatabase() {
@@ -41,8 +41,11 @@ abstract class PasteleriaDatabase : RoomDatabase() {
                     PasteleriaDatabase::class.java,
                     "pasteleria_db"
                 )
-                    // --- ¡AÑADIMOS EL CALLBACK AQUÍ! ---
                     .addCallback(DatabaseCallback(contexto, CoroutineScope(Dispatchers.IO)))
+                    // ¡OJO! Como subiste a version 2, si ya tenías la 1 instalada
+                    // esto fallará. Añade .fallbackToDestructiveMigration()
+                    // si estás en desarrollo para que se recree la BD.
+                    .fallbackToDestructiveMigration() // <-- ¡AÑADE ESTO!
                     .build()
 
                 INSTANCIA = instancia
@@ -72,7 +75,7 @@ private class DatabaseCallback(
             val jsonString = context.assets.open("data.json").bufferedReader().use { it.readText() }
             val json = JSONObject(jsonString)
 
-            // 1. Cargamos los Productos
+            // 1. Cargamos los Productos (Tu código - sin cambios)
             val productosArray = json.getJSONArray("productos")
             val listaProductos = mutableListOf<Producto>()
             for (i in 0 until productosArray.length()) {
@@ -90,10 +93,11 @@ private class DatabaseCallback(
                     )
                 )
             }
-            // Insertamos todos los productos en la BD
             productoDao.insertarTodos(listaProductos)
 
-            // 2. Cargamos los Usuarios
+            // --- ¡¡INICIO DE LA CORRECCIÓN!! ---
+
+            // 2. Cargamos los Usuarios (¡CORREGIDO!)
             val usuariosArray = json.getJSONArray("usuarios")
             val listaUsuarios = mutableListOf<Usuario>()
             for (i in 0 until usuariosArray.length()) {
@@ -103,13 +107,19 @@ private class DatabaseCallback(
                         id = u.getInt("id"),
                         email = u.getString("email"),
                         password = u.getString("password"),
-                        rol = u.getString("rol")
+                        // ¡Estos campos ahora coinciden con Usuario.kt y data.json!
+                        nombre = u.getString("nombre"),
+                        direccion = if (u.isNull("direccion")) null else u.getString("direccion")
                     )
                 )
             }
-            usuarioDao.insertarUsuarios(listaUsuarios)
+            // ¡Llamamos a la función DAO correcta!
+            usuarioDao.insertarTodos(listaUsuarios)
 
-            // 3. Cargamos el Blog
+            // --- ¡¡FIN DE LA CORRECCIÓN!! ---
+
+
+            // 3. Cargamos el Blog (Tu código - sin cambios)
             val blogArray = json.getJSONArray("blog")
             val listaBlog = mutableListOf<Blog>()
             for (i in 0 until blogArray.length()) {
@@ -117,13 +127,13 @@ private class DatabaseCallback(
                 listaBlog.add(
                     Blog(
                         id = b.getInt("id"),
-                        categoria = b.getString("categoria"), // <-- NUEVO
+                        categoria = b.getString("categoria"),
                         titulo = b.getString("titulo"),
                         resumen = b.getString("resumen"),
                         fecha = b.getString("fecha"),
-                        autor = b.getString("autor"), // <-- NUEVO
+                        autor = b.getString("autor"),
                         imagen = b.getString("imagen"),
-                        contenido = b.getString("contenido") // <-- NUEVO
+                        contenido = b.getString("contenido")
                     )
                 )
             }
