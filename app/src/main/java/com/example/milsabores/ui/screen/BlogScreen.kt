@@ -16,13 +16,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.milsabores.ui.components.BlogCard
+import com.example.milsabores.ui.navigation.Rutas
 import com.example.milsabores.ui.viewmodel.AppViewModelProvider
 import com.example.milsabores.ui.viewmodel.BlogViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BlogScreen(
+    navController: NavHostController,
     onVolverClick: () -> Unit,
     viewModel: BlogViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -81,9 +84,7 @@ fun BlogScreen(
                         ) { entrada ->
                             BlogCard(
                                 blog = entrada,
-                                onClick = {
-                                    // (Futuro: navegar al detalle del blog)
-                                }
+                                onClick = { navController.navigate(Rutas.irADetalleBlog(entrada.id)) }
                             )
                         }
                     }

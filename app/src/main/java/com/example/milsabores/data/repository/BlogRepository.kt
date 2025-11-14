@@ -10,4 +10,5 @@ interface BlogRepository {
 
     // Contrato: "Cualquiera puede pedirme todas las entradas del blog"
     fun obtenerTodos(): Flow<List<Blog>>
+    fun obtenerPorId(blogId: Int): Flow<Blog>
 }

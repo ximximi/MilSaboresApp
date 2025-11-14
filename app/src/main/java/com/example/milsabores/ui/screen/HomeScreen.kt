@@ -43,11 +43,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.milsabores.R
 import com.example.milsabores.ui.components.BlogCard
 import com.example.milsabores.ui.components.CategoriaCard
 import com.example.milsabores.ui.components.FeatureCard
 import com.example.milsabores.ui.components.ProductoCard
+import com.example.milsabores.ui.navigation.Rutas
 import com.example.milsabores.ui.theme.MilSaboresTheme
 import com.example.milsabores.ui.viewmodel.AppViewModelProvider
 import com.example.milsabores.ui.viewmodel.HomeViewModel
@@ -55,6 +57,7 @@ import com.example.milsabores.ui.viewmodel.HomeViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    navController: NavHostController,
     onVolverClick: () -> Unit,
     onCarritoClick: () -> Unit,
     onVerCatalogoClick: () -> Unit,
@@ -256,8 +259,7 @@ fun HomeScreen(
                                     Box(modifier = Modifier.width(300.dp)) {
                                         BlogCard(
                                             blog = blog,
-                                            onClick = { /* (Futuro: ir al detalle del blog) */ }
-                                        )
+                                            onClick = { navController.navigate(Rutas.irADetalleBlog(blog.id)) }                                         )
                                     }
                                 }
                             }

@@ -20,5 +20,6 @@ interface BlogDao {
     @Query("SELECT * FROM blog")
     fun obtenerTodas(): Flow<List<Blog>>
 
-    // (Podríamos añadir un obtenerPorId si tuvieras una pantalla de detalle de blog)
+    @Query("SELECT * FROM blog WHERE id = :blogId")
+    fun obtenerPorId(blogId: Int): Flow<Blog>
 }

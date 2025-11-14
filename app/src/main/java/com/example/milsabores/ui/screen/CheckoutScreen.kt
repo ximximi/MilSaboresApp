@@ -1,18 +1,16 @@
 package com.example.milsabores.ui.screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.CreditCard
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -29,6 +27,10 @@ import com.example.milsabores.R
 import com.example.milsabores.ui.viewmodel.AppViewModelProvider
 import com.example.milsabores.ui.viewmodel.CheckoutViewModel
 import com.example.milsabores.ui.viewmodel.ItemCarritoDetallado
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,6 +76,7 @@ fun CheckoutScreen(
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Información de Entrega", style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.height(16.dp))
+
                 ValidatedTextField(
                     value = uiState.nombre,
                     onValueChange = { viewModel.onFieldChange("nombre", it) },
@@ -94,74 +97,72 @@ fun CheckoutScreen(
                     errorMessage = uiState.errorTelefono,
                     keyboardType = KeyboardType.Phone
                 )
-                ValidatedTextField(
-                    value = uiState.direccion,
-                    onValueChange = { viewModel.onFieldChange("direccion", it) },
-                    label = "Dirección de entrega *",
-                    errorMessage = uiState.errorDireccion
-                )
-            }
 
-            Divider()
-
-            // --- 2. FORMULARIO DE PAGO ---
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Información de Pago", style = MaterialTheme.typography.titleLarge)
-                Spacer(modifier = Modifier.height(16.dp))
-                ValidatedTextField(
-                    value = uiState.nombreTitular,
-                    onValueChange = { viewModel.onFieldChange("nombreTitular", it) },
-                    label = "Nombre del titular *",
-                    errorMessage = uiState.errorNombreTitular
-                )
-                ValidatedTextField(
-                    value = uiState.numeroTarjeta,
-                    onValueChange = { viewModel.onFieldChange("numeroTarjeta", it) },
-                    label = "Número de tarjeta *",
-                    errorMessage = uiState.errorNumeroTarjeta,
-                    keyboardType = KeyboardType.Number
-                )
+                // --- CAMPOS DE DIRECCIÓN ACTUALIZADOS ---
                 Row(Modifier.fillMaxWidth()) {
                     ValidatedTextField(
-                        value = uiState.fechaVenc,
-                        onValueChange = { viewModel.onFieldChange("fechaVenc", it) },
-                        label = "MM/AA *",
-                        errorMessage = uiState.errorFechaVenc,
-                        keyboardType = KeyboardType.Number,
-                        modifier = Modifier.weight(1f).padding(end = 8.dp)
+                        value = uiState.calle,
+                        onValueChange = { viewModel.onFieldChange("calle", it) },
+                        label = "Calle *",
+                        errorMessage = uiState.errorCalle,
+                        modifier = Modifier.weight(2f).padding(end = 8.dp)
                     )
                     ValidatedTextField(
-                        value = uiState.cvv,
-                        onValueChange = { viewModel.onFieldChange("cvv", it) },
-                        label = "CVV *",
-                        errorMessage = uiState.errorCvv,
+                        value = uiState.numeroCalle,
+                        onValueChange = { viewModel.onFieldChange("numeroCalle", it) },
+                        label = "Número *",
+                        errorMessage = uiState.errorNumeroCalle,
                         keyboardType = KeyboardType.Number,
                         modifier = Modifier.weight(1f).padding(start = 8.dp)
                     )
                 }
+
+                // --- NUEVO: DROPDOWN DE COMUNA ---
+                ComunaDropdown(
+                    comunaSeleccionada = uiState.comuna,
+                    comunas = uiState.listaComunas,
+                    onComunaSelect = { viewModel.onFieldChange("comuna", it) },
+                    errorMessage = uiState.errorComuna
+                )
+
+                // --- NUEVO: PICKER DE FECHA ---
+                FechaEntregaPicker(
+                    fechaSeleccionada = uiState.fechaEntrega,
+                    onFechaSelect = { viewModel.onFieldChange("fechaEntrega", it) },
+                    errorMessage = uiState.errorFechaEntrega
+                )
             }
 
             Divider()
 
-            // --- 3. RESUMEN DEL PEDIDO (¡ACTUALIZADO!) ---
+            // --- 2. FORMULARIO DE PAGO (SIMPLIFICADO) ---
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Información de Pago", style = MaterialTheme.typography.titleLarge)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // --- NUEVO: SELECTOR DE MÉTODO DE PAGO ---
+                MetodoPagoSelector(
+                    metodoSeleccionado = uiState.metodoPago,
+                    onMetodoSelect = { viewModel.onFieldChange("metodoPago", it) },
+                    errorMessage = uiState.errorMetodoPago
+                )
+            }
+
+            Divider()
+
+            // --- 3. RESUMEN DEL PEDIDO ---
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text("Resumen del Pedido", style = MaterialTheme.typography.titleLarge)
-
-                // --- ¡NUEVO! TRADUCCIÓN DE <div class="summary-products"> ---
                 uiState.items.forEach { item ->
                     SummaryProductItem(item = item)
                 }
-                // --- FIN DE LA ACTUALIZACIÓN ---
-
                 Divider(modifier = Modifier.padding(vertical = 4.dp))
                 ResumenLinea(texto = "Subtotal", valor = "$${uiState.subtotal}")
                 ResumenLinea(texto = "Envío", valor = "$${uiState.costoEnvio}")
-
                 Divider(modifier = Modifier.padding(vertical = 4.dp))
-
                 ResumenLinea(
                     texto = "Total",
                     valor = "$${uiState.totalAPagar}",
@@ -176,6 +177,7 @@ fun CheckoutScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
                     .height(56.dp),
+                // Habilitado solo si no está procesando
                 enabled = !uiState.estaProcesando
             ) {
                 if (uiState.estaProcesando) {
@@ -189,9 +191,173 @@ fun CheckoutScreen(
     }
 }
 
-/**
- * Componente reutilizable para un campo de texto con validación.
- */
+// --- Componentes Reutilizables (Helpers) ---
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ComunaDropdown(
+    comunaSeleccionada: String,
+    comunas: List<String>,
+    onComunaSelect: (String) -> Unit,
+    errorMessage: String?
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        OutlinedTextField(
+            value = comunaSeleccionada,
+            onValueChange = {}, // No se puede cambiar escribiendo
+            readOnly = true,
+            label = { Text("Comuna *") },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            isError = errorMessage != null,
+            modifier = Modifier.fillMaxWidth().menuAnchor() // Importante
+        )
+        // Mensaje de error (si existe)
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            )
+        }
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            comunas.forEach { comuna ->
+                DropdownMenuItem(
+                    text = { Text(comuna) },
+                    onClick = {
+                        onComunaSelect(comuna)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+    Spacer(modifier = Modifier.height(8.dp))
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FechaEntregaPicker(
+    fechaSeleccionada: String,
+    onFechaSelect: (String) -> Unit,
+    errorMessage: String?
+) {
+    val context = LocalContext.current
+    val datePickerState = rememberDatePickerState(
+        // Deshabilita fechas anteriores a mañana
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                val hoy = Calendar.getInstance().apply {
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }
+                return utcTimeMillis > hoy.timeInMillis
+            }
+        }
+    )
+    var mostrarDialog by remember { mutableStateOf(false) }
+
+    if (mostrarDialog) {
+        DatePickerDialog(
+            onDismissRequest = { mostrarDialog = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    mostrarDialog = false
+                    // Convierte el milisegundo a una fecha legible
+                    val fecha = datePickerState.selectedDateMillis?.let {
+                        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        sdf.format(Date(it))
+                    } ?: ""
+                    onFechaSelect(fecha)
+                }) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { mostrarDialog = false }) {
+                    Text("Cancelar")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+
+    // El campo de texto que abre el diálogo
+    OutlinedTextField(
+        value = fechaSeleccionada,
+        onValueChange = {},
+        readOnly = true,
+        label = { Text("Fecha de entrega *") },
+        isError = errorMessage != null,
+        trailingIcon = {
+            Icon(
+                Icons.Default.CalendarToday,
+                "Seleccionar fecha",
+                Modifier.clickable { mostrarDialog = true }
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { mostrarDialog = true }
+    )
+    if (errorMessage != null) {
+        Text(
+            text = errorMessage,
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+        )
+    }
+    Spacer(modifier = Modifier.height(8.dp))
+}
+
+@Composable
+private fun MetodoPagoSelector(
+    metodoSeleccionado: String,
+    onMetodoSelect: (String) -> Unit,
+    errorMessage: String?
+) {
+    val opcion = "webpay" // Solo tenemos una opción
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onMetodoSelect(opcion) }
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(
+                selected = metodoSeleccionado == opcion,
+                onClick = { onMetodoSelect(opcion) }
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Pagar con Webpay (Simulado)", style = MaterialTheme.typography.bodyLarge)
+        }
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            )
+        }
+    }
+}
+
+// --- Componentes de Resumen (Sin cambios) ---
+
 @Composable
 private fun ValidatedTextField(
     value: String,
@@ -218,9 +384,6 @@ private fun ValidatedTextField(
     Spacer(modifier = Modifier.height(8.dp))
 }
 
-/**
- * Componente reutilizable para las líneas del resumen (Subtotal, Total, etc.)
- */
 @Composable
 private fun ResumenLinea(texto: String, valor: String, esTotal: Boolean = false) {
     val estilo = if (esTotal) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyLarge
@@ -235,10 +398,6 @@ private fun ResumenLinea(texto: String, valor: String, esTotal: Boolean = false)
     }
 }
 
-/**
- * ¡NUEVO! Componente para mostrar cada producto en el resumen
- * (Traducción de <div class="summary-product">)
- */
 @Composable
 private fun SummaryProductItem(item: ItemCarritoDetallado) {
     Row(

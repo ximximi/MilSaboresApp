@@ -22,7 +22,8 @@ object Rutas {
     const val ADMIN_GESTION_PRODUCTOS = "admin_gestion_productos" // (gestion-productos.html)
     const val ADMIN_CREAR_PRODUCTO = "admin_crear_producto" // (create-producto.html)
     const val ADMIN_GESTION_PEDIDOS = "admin_gestion_pedidos" // (gestion-pedidos.html)
-
+    const val DETALLE_BLOG = "detalle_blog/{blogId}"
     // Función para navegar a un producto con su ID
     fun irADetalle(productoId: Int) = "detalle_producto/$productoId"
+    fun irADetalleBlog(blogId: Int) = "detalle_blog/$blogId"
 }

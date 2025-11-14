@@ -14,4 +14,7 @@ class BlogRepositoryImpl(
     override fun obtenerTodos(): Flow<List<Blog>> {
         return dao.obtenerTodas() // Llama al DAO
     }
+    override fun obtenerPorId(blogId: Int): Flow<Blog> {
+        return dao.obtenerPorId(blogId)
+    }
 }

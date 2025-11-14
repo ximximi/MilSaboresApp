@@ -18,11 +18,13 @@ data class DatosCompra(
     val totales: TotalesInfo
 )
 
+// --- AQUÍ ESTÁ EL PRIMER CAMBIO ---
 data class ClienteInfo(
     val nombre: String,
     val email: String,
     val telefono: String,
-    val direccion: String,
+    val calle: String, // <-- ACTUALIZADO
+    val numeroCalle: String, // <-- ACTUALIZADO
     val comuna: String,
     val fechaEntrega: String
 )
@@ -50,14 +52,19 @@ fun crearDatosCompra(uiState: CheckoutUiState): DatosCompra {
         numeroPedido = generarNumeroPedido(),
         fecha = SimpleDateFormat("dd 'de' MMMM, yyyy - HH:mm", Locale.getDefault()).format(Date()),
         productos = uiState.items,
+
+        // --- AQUÍ ESTÁ EL SEGUNDO CAMBIO ---
         cliente = ClienteInfo(
             nombre = uiState.nombre,
             email = uiState.email,
             telefono = uiState.telefono,
-            direccion = uiState.direccion,
+            calle = uiState.calle, // <-- ACTUALIZADO
+            numeroCalle = uiState.numeroCalle, // <-- ACTUALIZADO
             comuna = uiState.comuna,
             fechaEntrega = uiState.fechaEntrega
         ),
+        // ---------------------------------
+
         totales = TotalesInfo(
             subtotal = uiState.subtotal,
             envio = uiState.costoEnvio,

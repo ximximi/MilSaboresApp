@@ -15,6 +15,7 @@ import com.example.milsabores.ui.screen.BlogScreen
 import com.example.milsabores.ui.screen.CatalogoScreen
 import com.example.milsabores.ui.screen.CheckoutScreen
 import com.example.milsabores.ui.screen.ConfirmacionScreen
+import com.example.milsabores.ui.screen.DetalleBlogScreen
 import com.example.milsabores.ui.screen.DetalleScreen
 import com.example.milsabores.ui.screen.HomeScreen
 import com.example.milsabores.ui.screen.IndexScreen
@@ -47,6 +48,7 @@ fun NavGraph(
         // --- RUTA DEL HOME ---
         composable(Rutas.HOME) {
             HomeScreen(
+                navController = navController,
                 onVolverClick = { navController.popBackStack() },
                 onCarritoClick = { navController.navigate(Rutas.CARRITO) },
                 onVerCatalogoClick = { navController.navigate(Rutas.CATALOGO) },
@@ -154,6 +156,15 @@ fun NavGraph(
         // --- De la rama 'blog' ---
         composable(Rutas.BLOG) {
             BlogScreen(
+                navController = navController,
+                onVolverClick = { navController.popBackStack() }
+            )
+        }
+        composable(
+            route = Rutas.DETALLE_BLOG,
+            arguments = listOf(navArgument("blogId") { type = NavType.IntType })
+        ) {
+            DetalleBlogScreen(
                 onVolverClick = { navController.popBackStack() }
             )
         }
