@@ -112,7 +112,7 @@ class RegistroViewModel(
                     }
                 }
             } catch (e: Exception) {
-                // Falla (Error de sistema, ej. BD)
+                // Falla (Error de sistema, ej. BD).
                 _uiState.update { it.copy(isLoading = false, error = "Error: ${e.message}") }
             }
         }
