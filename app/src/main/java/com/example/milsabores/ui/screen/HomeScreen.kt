@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Phone
@@ -44,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.milsabores.R
 import com.example.milsabores.ui.components.BlogCard
 import com.example.milsabores.ui.components.CategoriaCard
@@ -62,7 +64,8 @@ fun HomeScreen(
     onCarritoClick: () -> Unit,
     onVerCatalogoClick: () -> Unit,
     onBlogClick: () -> Unit,
-    onProductoClick: (Int) -> Unit, // <-- ¡Importante! Para navegar al detalle
+    onProductoClick: (Int) -> Unit,
+    onPerfilClick: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     // 2. Obtenemos el "estado" (UiState) del ViewModel
@@ -79,8 +82,13 @@ fun HomeScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = onCarritoClick) {
-                        Icon(Icons.Default.ShoppingCart, "Carrito")
+                    Row { // <-- AÑADE ESTO
+                        IconButton(onClick = onPerfilClick) {
+                            Icon(Icons.Filled.AccountCircle, "Mi Perfil")
+                        }
+                        IconButton(onClick = onCarritoClick) {
+                            Icon(Icons.Filled.ShoppingCart, "Carrito")
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -310,11 +318,13 @@ private fun BannerSection(onVerCatalogoClick: () -> Unit) {
 fun HomeScreenPreview() {
     MilSaboresTheme {
         HomeScreen(
+            navController = rememberNavController(),
             onVolverClick = {},
             onCarritoClick = {},
             onVerCatalogoClick = {},
             onBlogClick = {},
-            onProductoClick = {}
+            onProductoClick = {},
+            onPerfilClick ={}
         )
     }
 }

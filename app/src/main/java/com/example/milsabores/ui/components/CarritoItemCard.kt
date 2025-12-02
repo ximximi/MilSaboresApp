@@ -1,6 +1,7 @@
 package com.example.milsabores.ui.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -10,13 +11,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.milsabores.R
 import com.example.milsabores.ui.viewmodel.ItemCarritoDetallado
 
 @Composable
@@ -31,7 +35,10 @@ fun CarritoItemCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(2.dp)
+        elevation = CardDefaults.cardElevation(2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background
+        )
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -39,14 +46,25 @@ fun CarritoItemCard(
         ) {
             // --- Imagen del Producto ---
             Card(modifier = Modifier.size(80.dp), elevation = CardDefaults.cardElevation(0.dp)) {
+                // Lógica inteligente para la imagen pequeña
+                val imagenUrl = if (item.producto.imagen.startsWith("http")) {
+                    item.producto.imagen
+                } else {
+                    "file:///android_asset/${item.producto.imagen}"
+                }
+
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("file:///android_asset/${item.producto.imagen}")
+                        .data(imagenUrl)
                         .crossfade(true)
                         .build(),
                     contentDescription = item.producto.nombre,
+                    modifier = Modifier
+                        .size(80.dp) // Tamaño pequeño para el carrito
+                        .clip(RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    // Placeholder si falla
+                    error = painterResource(R.drawable.logo_mil_sabores)
                 )
             }
 

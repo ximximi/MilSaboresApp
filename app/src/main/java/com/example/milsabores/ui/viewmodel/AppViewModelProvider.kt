@@ -107,12 +107,14 @@ object AppViewModelProvider {
                 milSaboresApplication().container.usuarioRepository
 
             // 2. Crea y devuelve el RegistroViewModel
-            // (¡Saldrá en ROJO! Lo crearemos en el Paso 2)
             RegistroViewModel(
                 usuarioRepository = usuarioRepository
             )
         }
-
+        initializer {
+            val repository = milSaboresApplication().container.usuarioRepository
+            PerfilViewModel(repository)
+        }
         initializer {
             val repository = milSaboresApplication().container.blogRepository
             val savedStateHandle = createSavedStateHandle()

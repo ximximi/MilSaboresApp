@@ -12,18 +12,19 @@ import androidx.room.PrimaryKey
  * (id: Int = 0) para que Room genere el ID por nosotros en el registro.
  * 2. @Entity: Añadimos 'indices' para hacer que el email sea 'unique'.
  * Esto asegura que la BD falle si intentamos registrar un email duplicado
- * (¡lo cual es bueno!).
+
  * 3. Campos: Eliminamos 'rol' y añadimos 'nombre' y 'direccion' (nulable)
  * para que coincida con nuestro formulario de registro y el PasteleriaDatabase.kt.
  */
 @Entity(
     tableName = "usuarios",
-    indices = [Index(value = ["email"], unique = true)] // <-- ¡CAMBIO!
+    indices = [Index(value = ["email"], unique = true)]
 )
 data class Usuario(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0, // <-- ¡CAMBIO!
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val email: String,
     val password: String,
     val nombre: String,
-    val direccion: String?
+    val direccion: String?,
+    val fotoPerfil: String? = null
 )

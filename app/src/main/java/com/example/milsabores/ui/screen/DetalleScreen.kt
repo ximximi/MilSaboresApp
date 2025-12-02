@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
@@ -29,6 +30,8 @@ import com.example.milsabores.ui.viewmodel.DetalleViewModel
 @Composable
 fun DetalleScreen(
     onVolverClick: () -> Unit,
+    onPerfilClick: () -> Unit,
+    onCarritoClick: () -> Unit,
     viewModel: DetalleViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     // Obtenemos el estado (cargando, producto, error) del ViewModel
@@ -42,6 +45,16 @@ fun DetalleScreen(
                 navigationIcon = {
                     IconButton(onClick = onVolverClick) {
                         Icon(Icons.Default.ArrowBack, "Volver")
+                    }
+                },
+                actions = {
+                    Row {
+                        IconButton(onClick = onPerfilClick) {
+                            Icon(Icons.Filled.AccountCircle, "Mi Perfil")
+                        }
+                        IconButton(onClick = onCarritoClick) {
+                            Icon(Icons.Filled.ShoppingCart, "Carrito")
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -86,16 +99,25 @@ fun DetalleScreen(
                             .height(250.dp),
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
+                        // Lógica inteligente para la imagen (Internet vs Local)
+                        val imagenUrl = if (producto.imagen.startsWith("http")) {
+                            producto.imagen // Es una URL de internet (API)
+                        } else {
+                            "file:///android_asset/${producto.imagen}" // Es una ruta local (Assets)
+                        }
+
                         AsyncImage(
-                            model = ImageRequest.Builder(context)
-                                .data("file:///android_asset/${producto.imagen}")
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(imagenUrl) // <-- Usamos la variable inteligente
                                 .crossfade(true)
                                 .build(),
                             contentDescription = producto.nombre,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp), // Altura para el detalle
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize(),
-                            // Placeholder por si la imagen no carga
-                            error = painterResource(id = R.drawable.logo_mil_sabores)
+                            // Placeholder si falla la carga (mientras se arregla la API)
+                            error = painterResource(R.drawable.logo_mil_sabores)
                         )
                     }
 

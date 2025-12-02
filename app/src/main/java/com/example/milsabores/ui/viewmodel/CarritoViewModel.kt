@@ -93,9 +93,9 @@ class CarritoViewModel(
         }
         viewModelScope.launch {
             // El DAO lo maneja como "insertar o reemplazar"
-            carritoRepository.agregarAlCarrito(
-                producto = _uiState.value.items.find { it.producto.id == productoId }!!.producto,
-                cantidad = cantidadNueva
+            carritoRepository.actualizarCantidad(
+                productoId = productoId,
+                nuevaCantidad = cantidadNueva
             )
         }
     }

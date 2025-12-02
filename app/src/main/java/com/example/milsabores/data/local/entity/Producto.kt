@@ -12,7 +12,7 @@ data class Producto(
     val codigo: String,
     val categoria: String,
     val nombre: String,
-    val precio: Int, // Usamos Int porque tu JSON tiene números enteros
+    val precio: Int,
     val descripcion: String,
     val imagen: String,
     val icono: String

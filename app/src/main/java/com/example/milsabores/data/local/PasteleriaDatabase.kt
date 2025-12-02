@@ -20,7 +20,7 @@ import org.json.JSONObject
 
 @Database(
     entities = [Producto::class, Usuario::class, Blog::class, ItemCarrito::class],
-    version = 2, // ¡Mantenemos tu versión 2!
+    version = 5,
     exportSchema = false
 )
 abstract class PasteleriaDatabase : RoomDatabase() {

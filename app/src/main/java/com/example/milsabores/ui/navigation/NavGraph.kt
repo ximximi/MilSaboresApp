@@ -3,26 +3,20 @@ package com.example.milsabores.ui.navigation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.milsabores.ui.screen.CarritoScreen
-import com.example.milsabores.ui.screen.BlogScreen
-import com.example.milsabores.ui.screen.CatalogoScreen
-import com.example.milsabores.ui.screen.CheckoutScreen
-import com.example.milsabores.ui.screen.ConfirmacionScreen
-import com.example.milsabores.ui.screen.DetalleBlogScreen
-import com.example.milsabores.ui.screen.DetalleScreen
-import com.example.milsabores.ui.screen.HomeScreen
-import com.example.milsabores.ui.screen.IndexScreen
-import com.example.milsabores.ui.screen.LoginScreen
-import com.example.milsabores.ui.screen.RegistroScreen
+import com.example.milsabores.ui.screen.*
 import com.example.milsabores.ui.viewmodel.AppViewModelProvider
 import com.example.milsabores.ui.viewmodel.LoginViewModel
+import com.example.milsabores.ui.viewmodel.PerfilViewModel
 import com.example.milsabores.ui.viewmodel.RegistroViewModel
 
 @Composable
@@ -37,11 +31,14 @@ fun NavGraph(
     ) {
 
         // --- RUTA DE BIENVENIDA ---
-
         composable(Rutas.INDEX) {
             IndexScreen(
-                onEntrarClick = { navController.navigate(Rutas.HOME) },
-                onAdminClick = { navController.navigate(Rutas.LOGIN) }
+                onLoginClick = { navController.navigate(Rutas.LOGIN) },
+                onRegistroClick = { navController.navigate(Rutas.REGISTRO) },
+                onInvitadoClick = {
+                    // Navega al Home como invitado
+                    navController.navigate(Rutas.HOME)
+                }
             )
         }
 
@@ -53,6 +50,7 @@ fun NavGraph(
                 onCarritoClick = { navController.navigate(Rutas.CARRITO) },
                 onVerCatalogoClick = { navController.navigate(Rutas.CATALOGO) },
                 onBlogClick = { navController.navigate(Rutas.BLOG) },
+                onPerfilClick = { navController.navigate(Rutas.PERFIL) },
                 onProductoClick = { productoId ->
                     navController.navigate(Rutas.irADetalle(productoId))
                 }
@@ -60,75 +58,105 @@ fun NavGraph(
         }
 
         // --- RUTA DE LOGIN ---
-
         composable(Rutas.LOGIN) {
-            // Pide el LoginViewModel usando la Fábrica Central
             val loginViewModel: LoginViewModel = viewModel(factory = AppViewModelProvider.Factory)
             LoginScreen(
-                viewModel = loginViewModel, // Pasa el ViewModel a la pantalla
+                viewModel = loginViewModel,
                 onLoginSuccess = {
-                    // Si el login es exitoso, navega a Home y
-                    // limpia el "historial" para que no pueda "volver" al login
                     navController.navigate(Rutas.HOME) {
                         popUpTo(Rutas.INDEX) { inclusive = true }
                     }
                 },
                 onNavigateToRegistro = {
                     navController.navigate(Rutas.REGISTRO)
-                }
+                },
+                onVolverAIndex = { navController.popBackStack() }
             )
         }
 
         // --- REGISTRO ---
         composable(Rutas.REGISTRO) {
-            // ¡Esta es la versión BUENA!
             val viewModel: RegistroViewModel = viewModel(factory = AppViewModelProvider.Factory)
             RegistroScreen(
                 viewModel = viewModel,
                 onRegistroSuccess = {
-                    navController.popBackStack() // Vuelve a la pantalla de Login
+                    navController.popBackStack()
                 },
                 onVolverALogin = {
-                    navController.popBackStack() // Vuelve a la pantalla de Login
+                    navController.popBackStack()
                 }
             )
         }
 
-        // --- De la rama 'catalogo' ---
+        // --- PERFIL (NUEVO) ---
+        // --- RUTA PERFIL (Lógica Corregida) ---
+        composable(Rutas.PERFIL) {
+            val perfilViewModel: PerfilViewModel = viewModel(factory = AppViewModelProvider.Factory)
+            val usuario by perfilViewModel.usuarioLogueado.collectAsState()
+            // No navegamos a otra ruta. Decidimos qué mostrar AQUÍ mismo.
+            if (usuario != null) {
+                // CASO A: Usuario Logueado -> Mostrar Perfil
+                PerfilScreen(
+                    onVolverClick = { navController.popBackStack() },
+                    onCerrarSesion = {
+                        navController.navigate(Rutas.INDEX) {
+                            popUpTo(0)
+                        }
+                    }
+                )
+            } else {
+                // CASO B: Usuario No Logueado -> Mostrar Login
+                // Reutilizamos la pantalla de Login, pero dentro de la ruta Perfil
+                val loginViewModel: LoginViewModel = viewModel(factory = AppViewModelProvider.Factory)
+                LoginScreen(
+                    viewModel = loginViewModel,
+                    onLoginSuccess = {
+
+                    },
+                    onNavigateToRegistro = { navController.navigate(Rutas.REGISTRO) },
+                    onVolverAIndex = { navController.popBackStack() }
+                )
+            }
+        }
+
+        // --- CATALOGO ---
         composable(Rutas.CATALOGO) {
             CatalogoScreen(
                 onVolverClick = { navController.popBackStack() },
                 onCarritoClick = { navController.navigate(Rutas.CARRITO) },
+                onPerfilClick = { navController.navigate(Rutas.PERFIL) }, // <-- AGREGADO
                 onProductoClick = { productoId ->
                     navController.navigate(Rutas.irADetalle(productoId))
                 }
             )
         }
 
-        // --- De la rama 'catalogo' ---
+        // --- DETALLE ---
         composable(
             route = Rutas.DETALLE_PRODUCTO,
-            arguments = listOf(navArgument("productoId") {
-                type = NavType.IntType
-            })
+            arguments = listOf(navArgument("productoId") { type = NavType.IntType })
         ) {
             DetalleScreen(
-                onVolverClick = { navController.popBackStack() }
+                onVolverClick = { navController.popBackStack() },
+                onPerfilClick = { navController.navigate(Rutas.PERFIL) },
+                onCarritoClick = { navController.navigate(Rutas.CARRITO) } // <-- ¡AÑADIDO!
             )
         }
 
+        // --- CARRITO ---
         composable(Rutas.CARRITO) {
             CarritoScreen(
                 onVolverClick = { navController.popBackStack() },
-                onIrAPagarClick = { navController.navigate(Rutas.CHECKOUT) } // Navega al Checkout
+                onIrAPagarClick = { navController.navigate(Rutas.CHECKOUT) },
+                onPerfilClick = { navController.navigate(Rutas.PERFIL) } // <-- AGREGADO
             )
         }
 
+        // --- CHECKOUT ---
         composable(Rutas.CHECKOUT) {
             CheckoutScreen(
                 onVolverClick = { navController.popBackStack() },
                 onPagoExitoso = {
-                    // Navega a la confirmación y limpia toda la pila de "compra"
                     navController.navigate(Rutas.CONFIRMACION) {
                         popUpTo(Rutas.HOME) { inclusive = false }
                     }
@@ -136,16 +164,15 @@ fun NavGraph(
             )
         }
 
+        // --- CONFIRMACION ---
         composable(Rutas.CONFIRMACION) {
             ConfirmacionScreen(
                 onVolverAlInicioClick = {
-                    // Navega al inicio y limpia TODA la pila de navegación
                     navController.navigate(Rutas.INDEX) {
                         popUpTo(navController.graph.startDestinationId) { inclusive = true }
                     }
                 },
                 onSeguirComprandoClick = {
-                    // Navega al catálogo y limpia la pila de "compra"
                     navController.navigate(Rutas.CATALOGO) {
                         popUpTo(Rutas.HOME) { inclusive = false }
                     }
@@ -153,13 +180,16 @@ fun NavGraph(
             )
         }
 
-        // --- De la rama 'blog' ---
+        // --- BLOG ---
         composable(Rutas.BLOG) {
             BlogScreen(
                 navController = navController,
-                onVolverClick = { navController.popBackStack() }
+                onVolverClick = { navController.popBackStack() },
+                onPerfilClick = { navController.navigate(Rutas.PERFIL) },
+                onCarritoClick = { navController.navigate(Rutas.CARRITO) } // <-- ¡AÑADIDO!
             )
         }
+
         composable(
             route = Rutas.DETALLE_BLOG,
             arguments = listOf(navArgument("blogId") { type = NavType.IntType })
@@ -169,14 +199,11 @@ fun NavGraph(
             )
         }
 
-        // --- RUTAS DE AUTENTICACIÓN (ADMIN) ---
-
         composable(Rutas.ADMIN_LOGIN) {
             Text(
                 "Pantalla de Login de Admin (en construcción)",
                 color = MaterialTheme.colorScheme.primary
             )
         }
-
     }
 }

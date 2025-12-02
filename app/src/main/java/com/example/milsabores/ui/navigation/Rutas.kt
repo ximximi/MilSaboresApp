@@ -15,7 +15,7 @@ object Rutas {
     // Rutas de Autenticación
     const val LOGIN = "login" // (login.html)
     const val REGISTRO = "registro" // (registro-usuario.html)
-
+    const val PERFIL = "perfil"
     // Rutas de Administrador
     const val ADMIN_LOGIN = "admin_login" // Usaremos login.html para admin tmb
     const val ADMIN_HOME = "admin_home" // (home-admin.html)

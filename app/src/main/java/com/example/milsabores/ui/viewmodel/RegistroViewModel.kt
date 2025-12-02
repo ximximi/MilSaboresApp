@@ -20,6 +20,7 @@ data class RegistroUiState(
     val direccion: String = "",
     val isLoading: Boolean = false,
     val error: String? = null,
+    val fotoUri: String? = null,
     val registroExitoso: Boolean = false
 )
 
@@ -30,6 +31,7 @@ sealed interface RegistroEvent {
     data class OnPasswordChange(val pass: String) : RegistroEvent
     data class OnConfirmarPasswordChange(val pass: String) : RegistroEvent
     data class OnDireccionChange(val direccion: String) : RegistroEvent
+    data class OnFotoCapturada(val uri: String) : RegistroEvent
     object OnRegistroClick : RegistroEvent
 }
 
@@ -52,6 +54,7 @@ class RegistroViewModel(
             is RegistroEvent.OnEmailChange -> _uiState.update { it.copy(email = event.email) }
             is RegistroEvent.OnPasswordChange -> _uiState.update { it.copy(password = event.pass) }
             is RegistroEvent.OnConfirmarPasswordChange -> _uiState.update { it.copy(confirmarPassword = event.pass) }
+            is RegistroEvent.OnFotoCapturada -> _uiState.update { it.copy(fotoUri = event.uri) }
             is RegistroEvent.OnDireccionChange -> _uiState.update { it.copy(direccion = event.direccion) }
             RegistroEvent.OnRegistroClick -> {
                 intentarRegistro()
@@ -65,6 +68,7 @@ class RegistroViewModel(
     private fun intentarRegistro() {
         // Obtenemos los valores actuales del estado
         val state = uiState.value
+
 
         // 1. Revisar campos vacíos (excepto dirección)
         if (state.nombre.isBlank() || state.email.isBlank() || state.password.isBlank()) {
@@ -92,11 +96,11 @@ class RegistroViewModel(
                 nombre = state.nombre.trim(),
                 email = state.email.trim(),
                 password = state.password,
+                fotoPerfil = state.fotoUri,
                 direccion = state.direccion.trim().takeIf { it.isNotBlank() } // null si está vacía
             )
 
             try {
-                // Llamamos al Repositorio (el "trabajador")
                 val resultado = usuarioRepository.registrarUsuario(nuevoUsuario)
 
                 if (resultado.isSuccess) {

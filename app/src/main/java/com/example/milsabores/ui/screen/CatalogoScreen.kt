@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -14,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
@@ -34,7 +36,8 @@ import com.example.milsabores.ui.viewmodel.CatalogoViewModel
 fun CatalogoScreen(
     onVolverClick: () -> Unit,
     onCarritoClick: () -> Unit,
-    onProductoClick: (Int) -> Unit, // Acción para ir al detalle
+    onProductoClick: (Int) -> Unit,
+    onPerfilClick: () -> Unit,
     viewModel: CatalogoViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     // Obtenemos el estado del ViewModel (cargando, productos, filtros, etc.)
@@ -50,8 +53,13 @@ fun CatalogoScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = onCarritoClick) {
-                        Icon(Icons.Default.ShoppingCart, "Carrito")
+                    Row {
+                        IconButton(onClick = onPerfilClick) {
+                            Icon(Icons.Filled.AccountCircle, "Mi Perfil")
+                        }
+                        IconButton(onClick = onCarritoClick) {
+                            Icon(Icons.Filled.ShoppingCart, "Carrito")
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

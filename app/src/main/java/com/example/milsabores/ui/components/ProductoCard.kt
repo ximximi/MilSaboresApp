@@ -45,17 +45,23 @@ fun ProductoCard(
             // --- TRADUCCIÓN de <div class="container-img"> ---
             // Coil (AsyncImage) puede cargar imágenes desde "assets"
             // usando un URI especial
+            // Lógica inteligente para la imagen
+            val imagenUrl = if (producto.imagen.startsWith("http")) {
+                producto.imagen // Es una URL de internet (API)
+            } else {
+                "file:///android_asset/${producto.imagen}" // Es una ruta local (Assets)
+            }
+
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    // Esta es la "magia": le decimos que cargue desde assets
-                    .data("file:///android_asset/${producto.imagen}")
+                    .data(imagenUrl) // <-- Usamos la variable inteligente
                     .crossfade(true)
                     .build(),
                 contentDescription = producto.nombre,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp),
-                contentScale = ContentScale.Crop // Rellena el espacio
+                contentScale = ContentScale.Crop
             )
 
             // --- TRADUCCIÓN de <div class="content-card-product"> ---

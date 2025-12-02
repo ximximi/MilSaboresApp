@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.DeleteSweep
@@ -25,6 +26,7 @@ import com.example.milsabores.ui.viewmodel.CarritoViewModel
 fun CarritoScreen(
     onVolverClick: () -> Unit,
     onIrAPagarClick: () -> Unit,
+    onPerfilClick: () -> Unit,
     viewModel: CarritoViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -39,9 +41,13 @@ fun CarritoScreen(
                     }
                 },
                 actions = {
-                    // Botón "Limpiar Carrito" (tu <button id="limpiar-carrito">)
-                    IconButton(onClick = { viewModel.limpiarCarrito() }) {
-                        Icon(Icons.Filled.DeleteSweep, "Limpiar Carrito")
+                    Row {
+                        IconButton(onClick = onPerfilClick) {
+                            Icon(Icons.Filled.AccountCircle, "Mi Perfil")
+                        }
+                        IconButton(onClick = { viewModel.limpiarCarrito() }) {
+                            Icon(Icons.Filled.DeleteSweep, "Limpiar Carrito")
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -113,7 +119,10 @@ fun CarritoScreen(
                     // 2. El Resumen del Pedido
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(8.dp)
+                        elevation = CardDefaults.cardElevation(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.background
+                        )
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp),

@@ -128,7 +128,7 @@ private fun OrderDetails(datos: DatosCompra) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("Productos Pedidos", style = MaterialTheme.typography.titleLarge)
@@ -146,7 +146,8 @@ private fun OrderDetails(datos: DatosCompra) {
             Spacer(modifier = Modifier.height(8.dp))
             InfoEntregaRow("Nombre:", datos.cliente.nombre)
             InfoEntregaRow("Email:", datos.cliente.email)
-            InfoEntregaRow("Dirección:", datos.cliente.direccion)
+            InfoEntregaRow("Dirección:", "${datos.cliente.calle} ${datos.cliente.numeroCalle}") // Unimos calle y número
+            InfoEntregaRow("Comuna:", datos.cliente.comuna)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -160,7 +161,10 @@ private fun OrderDetails(datos: DatosCompra) {
 private fun PaymentSummary(totales: TotalesInfo) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(2.dp)
+        elevation = CardDefaults.cardElevation(2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background // Fondo Crema
+        )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("Resumen de Pago", style = MaterialTheme.typography.titleLarge)

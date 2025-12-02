@@ -20,7 +20,9 @@ android {
             useSupportLibrary = true
         }
     }
-
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -85,5 +87,23 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // --- RED (Según pauta) ---
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.moshi) // Usamos Moshi
+    implementation(libs.moshi.kotlin)
+    implementation(libs.okhttp.logging) // Para ver los logs en consola
 
+    // --- CÁMARA ---
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
+    // --- TESTING ---
+    testImplementation(libs.truth) // Google Truth
+    testImplementation(libs.mockwebserver) // Para simular API
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.turbine)
 }

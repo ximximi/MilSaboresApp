@@ -45,4 +45,14 @@ class CarritoRepositoryImpl(
     override suspend fun limpiarCarrito() {
         dao.limpiarCarrito()
     }
+    override suspend fun actualizarCantidad(productoId: Int, nuevaCantidad: Int) {
+        // Obtenemos el item
+        val itemExistente = dao.obtenerItemPorId(productoId)
+        if (itemExistente != null) {
+            // Creamos un nuevo item con la cantidad absoluta
+            val nuevoItem = itemExistente.copy(cantidad = nuevaCantidad)
+            // Usamos 'insertar' (que tiene OnConflictStrategy.REPLACE) para sobrescribir
+            dao.insertar(nuevoItem)
+        }
+    }
 }
