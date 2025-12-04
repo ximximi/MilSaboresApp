@@ -24,7 +24,7 @@ class ProductoRepositoryTest {
     private val repository = ProductoRepositoryImpl(productoDao, milSaboresApi)
 
     @Test
-    fun `obtenerTodos devuelve datos del DAO e intenta llamar a la API`() = runTest {
+    fun obtenerItems_debeDevolverFlujo_desdeDAO() = runTest {
         // GIVEN (Dado que):
         // 1. El DAO tiene datos locales
         val datosLocales = listOf(Producto(1, "C1", "cat", "Torta Local", 5000, "desc", "img", "icon"))

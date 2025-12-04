@@ -33,7 +33,7 @@ class UsuarioRepositoryTest {
     )
 
     @Test
-    fun `login exitoso devuelve usuario y actualiza estado`() = runTest {
+    fun loginExitosoDevuelveUsuario_y_Actualiza_Estado() = runTest {
         // GIVEN
         whenever(usuarioDao.validarCredenciales("juan@mail.com", "1234")).thenReturn(usuarioFake)
 
@@ -48,7 +48,7 @@ class UsuarioRepositoryTest {
     }
 
     @Test
-    fun `login fallido devuelve null`() = runTest {
+    fun loginFallidoDevuelveNull() = runTest {
         // GIVEN
         whenever(usuarioDao.validarCredenciales("malo@mail.com", "0000")).thenReturn(null)
 
@@ -60,7 +60,7 @@ class UsuarioRepositoryTest {
     }
 
     @Test
-    fun `registrarUsuario tiene exito si el email no existe`() = runTest {
+    fun registrarUsuario_Tiene_Exito_SiEl_email_NoExiste () = runTest {
         // GIVEN
         whenever(usuarioDao.obtenerUsuarioPorEmail("nuevo@mail.com")).thenReturn(null)
 
@@ -83,7 +83,7 @@ class UsuarioRepositoryTest {
     }
 
     @Test
-    fun `registrarUsuario falla si el email ya existe`() = runTest {
+    fun registrarUsuario_Falla_SiEl_Email_Existe() = runTest {
         // GIVEN
         whenever(usuarioDao.obtenerUsuarioPorEmail("juan@mail.com")).thenReturn(usuarioFake)
 

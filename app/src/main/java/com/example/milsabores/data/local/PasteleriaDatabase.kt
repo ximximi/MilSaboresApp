@@ -20,7 +20,7 @@ import org.json.JSONObject
 
 @Database(
     entities = [Producto::class, Usuario::class, Blog::class, ItemCarrito::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class PasteleriaDatabase : RoomDatabase() {
@@ -95,9 +95,7 @@ private class DatabaseCallback(
             }
             productoDao.insertarTodos(listaProductos)
 
-            // --- ¡¡INICIO DE LA CORRECCIÓN!! ---
-
-            // 2. Cargamos los Usuarios (¡CORREGIDO!)
+            // 2. Cargamos los Usuarios
             val usuariosArray = json.getJSONArray("usuarios")
             val listaUsuarios = mutableListOf<Usuario>()
             for (i in 0 until usuariosArray.length()) {
@@ -115,10 +113,6 @@ private class DatabaseCallback(
             }
             // ¡Llamamos a la función DAO correcta!
             usuarioDao.insertarTodos(listaUsuarios)
-
-            // --- ¡¡FIN DE LA CORRECCIÓN!! ---
-
-
             // 3. Cargamos el Blog (Tu código - sin cambios)
             val blogArray = json.getJSONArray("blog")
             val listaBlog = mutableListOf<Blog>()

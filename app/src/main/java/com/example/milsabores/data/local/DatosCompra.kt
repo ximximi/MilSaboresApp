@@ -18,13 +18,12 @@ data class DatosCompra(
     val totales: TotalesInfo
 )
 
-// --- AQUÍ ESTÁ EL PRIMER CAMBIO ---
 data class ClienteInfo(
     val nombre: String,
     val email: String,
     val telefono: String,
-    val calle: String, // <-- ACTUALIZADO
-    val numeroCalle: String, // <-- ACTUALIZADO
+    val calle: String,
+    val numeroCalle: String,
     val comuna: String,
     val fechaEntrega: String
 )
@@ -35,9 +34,6 @@ data class TotalesInfo(
     val total: Double
 )
 
-/**
- * "Traducción" de tu 'generarNumeroPedido()' de checkout.js
- */
 fun generarNumeroPedido(): String {
     val fecha = SimpleDateFormat("yyMMdd", Locale.getDefault()).format(Date())
     val random = (1000..9999).random()
@@ -53,13 +49,12 @@ fun crearDatosCompra(uiState: CheckoutUiState): DatosCompra {
         fecha = SimpleDateFormat("dd 'de' MMMM, yyyy - HH:mm", Locale.getDefault()).format(Date()),
         productos = uiState.items,
 
-        // --- AQUÍ ESTÁ EL SEGUNDO CAMBIO ---
         cliente = ClienteInfo(
             nombre = uiState.nombre,
             email = uiState.email,
             telefono = uiState.telefono,
-            calle = uiState.calle, // <-- ACTUALIZADO
-            numeroCalle = uiState.numeroCalle, // <-- ACTUALIZADO
+            calle = uiState.calle,
+            numeroCalle = uiState.numeroCalle,
             comuna = uiState.comuna,
             fechaEntrega = uiState.fechaEntrega
         ),

@@ -26,7 +26,7 @@ class CarritoRepositoryTest {
     private val productoFake = Producto(1, "C1", "cat", "Torta", 5000, "desc", "img", "icon")
 
     @Test
-    fun `obtenerItems devuelve el flujo del DAO`() = runTest {
+    fun obtenerItems_devuelve_flujo_del_DAO() = runTest {
         // GIVEN
         val listaFake = listOf(ItemCarrito(1, 2))
         whenever(carritoDao.obtenerItems()).thenReturn(flowOf(listaFake))
@@ -40,7 +40,7 @@ class CarritoRepositoryTest {
     }
 
     @Test
-    fun `agregarAlCarrito inserta NUEVO item si no existe`() = runTest {
+    fun agregarAlCarrito_Inserta_NUEVO_Item_SiNoEexiste() = runTest {
         // GIVEN: El DAO dice que no existe el item (devuelve null)
         whenever(carritoDao.obtenerItemPorId(1)).thenReturn(null)
 
@@ -56,7 +56,7 @@ class CarritoRepositoryTest {
     }
 
     @Test
-    fun `agregarAlCarrito SUMA cantidad si ya existe`() = runTest {
+    fun agregarAlCarrito_SUMA_Cantidad_SiYaExiste() = runTest {
         // GIVEN: El DAO dice que YA existe con cantidad 3
         val itemExistente = ItemCarrito(1, 3)
         whenever(carritoDao.obtenerItemPorId(1)).thenReturn(itemExistente)
@@ -72,7 +72,7 @@ class CarritoRepositoryTest {
     }
 
     @Test
-    fun `actualizarCantidad sobrescribe el valor`() = runTest {
+    fun actualizarCantidad_Sobrescribe_Valor() = runTest {
         // GIVEN: Existe el item
         whenever(carritoDao.obtenerItemPorId(1)).thenReturn(ItemCarrito(1, 5))
 

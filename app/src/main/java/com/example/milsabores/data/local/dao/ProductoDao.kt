@@ -7,7 +7,7 @@ import androidx.room.Query
 import com.example.milsabores.data.local.entity.Producto
 import kotlinx.coroutines.flow.Flow // Importante para datos "reactivos"
 
-@Dao // <-- Le dice a Room que esto es un DAO
+@Dao
 interface ProductoDao {
 
     // Inserta una lista de productos.
