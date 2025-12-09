@@ -4,8 +4,13 @@ import com.example.milsabores.data.local.entity.Producto
 
 data class CatalogoUiState(
     val estaCargando: Boolean = true,
-    val productos: List<Producto> = emptyList(), // La lista de productos
-    val categorias: List<String> = emptyList(), // Las categorías para los botones de filtro
-    val categoriaSeleccionada: String = "todos", // Para saber qué filtro está activo
+    val productos: List<Producto> = emptyList(),
+    val categorias: List<String> = listOf("todos", "tortas-cuadradas", "tortas-circulares", "vegana", "sin-azucar", "sin-gluten", "postres-individuales", "tradicional", "especiales" ), // Ya las dejamos fijas
+
+    // --- NUEVOS CAMPOS DE ESTADO ---
+    val categoriaSeleccionada: String = "todos",
+    val busqueda: String = "",           // Lo que el usuario escribe en la barra
+    val ordenAscendente: Boolean? = null, // null = sin orden, true = barato a caro, false = caro a barato
+
     val error: String? = null
 )

@@ -2,6 +2,8 @@ package com.example.milsabores.data.repository
 
 import com.example.milsabores.data.local.dao.UsuarioDao
 import com.example.milsabores.data.local.entity.Usuario
+import com.example.milsabores.data.remote.api.MilSaboresApi
+import com.example.milsabores.data.remote.dto.UsuarioDto
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -17,10 +19,12 @@ import org.mockito.kotlin.whenever
 class UsuarioRepositoryTest {
 
     private val usuarioDao: UsuarioDao = mock()
-    private val repository = UsuarioRepositoryImpl(usuarioDao)
+    // 1. Creamos el mock de la API
+    private val api: MilSaboresApi = mock()
 
-    // --- AQUÍ ESTABA EL ERROR ---
-    // Usamos argumentos nombrados para evitar confusión con el orden
+    // 2. Se lo pasamos al constructor
+    private val repository = UsuarioRepositoryImpl(usuarioDao, api)
+
     private val usuarioFake = Usuario(
         id = 1,
         nombre = "Juan",
@@ -28,14 +32,17 @@ class UsuarioRepositoryTest {
         password = "1234",
         direccion = "Calle Falsa 123",
         fotoPerfil = null
-        // rol = "cliente" // <-- NOTA: Si tu entity 'Usuario' tiene 'rol', descomenta esto.
-        // Si no lo tiene, déjalo así.
     )
 
     @Test
     fun loginExitosoDevuelveUsuario_y_Actualiza_Estado() = runTest {
         // GIVEN
+        // Simulamos que la BD Local tiene al usuario
         whenever(usuarioDao.validarCredenciales("juan@mail.com", "1234")).thenReturn(usuarioFake)
+
+        // TRUCO: Simulamos que NO hay internet (la API falla) para obligar al repositorio
+        // a usar la lógica de "Fallback" y buscar en la base de datos local (que es lo que queremos probar aquí).
+        whenever(api.loginUsuario(any(), any())).thenThrow(RuntimeException("Sin internet"))
 
         // WHEN
         val resultado = repository.login("juan@mail.com", "1234")
@@ -43,7 +50,6 @@ class UsuarioRepositoryTest {
         // THEN
         assertNotNull(resultado)
         assertEquals("Juan", resultado?.nombre)
-        // Verificamos que el StateFlow en memoria se actualizó
         assertEquals(usuarioFake, repository.usuarioLogueado.value)
     }
 
@@ -51,6 +57,8 @@ class UsuarioRepositoryTest {
     fun loginFallidoDevuelveNull() = runTest {
         // GIVEN
         whenever(usuarioDao.validarCredenciales("malo@mail.com", "0000")).thenReturn(null)
+        // También simulamos fallo de red para probar la lógica local pura
+        whenever(api.loginUsuario(any(), any())).thenThrow(RuntimeException("Sin internet"))
 
         // WHEN
         val resultado = repository.login("malo@mail.com", "0000")
@@ -61,8 +69,14 @@ class UsuarioRepositoryTest {
 
     @Test
     fun registrarUsuario_Tiene_Exito_SiEl_email_NoExiste () = runTest {
-        // GIVEN
+        // GIVEN (Local)
         whenever(usuarioDao.obtenerUsuarioPorEmail("nuevo@mail.com")).thenReturn(null)
+
+        // GIVEN (API)
+        // Para que el registro local ocurra, la API debe responder "OK" primero.
+        // Simulamos que la API devuelve un usuario creado exitosamente.
+        val dtoDummy = UsuarioDto(id="1", nombre="Nuevo", email="nuevo@mail.com", password="1234")
+        whenever(api.registrarUsuario(any())).thenReturn(dtoDummy)
 
         val nuevoUsuario = Usuario(
             id = 0,
@@ -78,7 +92,6 @@ class UsuarioRepositoryTest {
 
         // THEN
         assertTrue(resultado.isSuccess)
-        // Verificamos que llamó al DAO para guardar
         verify(usuarioDao).registrarUsuario(nuevoUsuario)
     }
 
@@ -101,7 +114,7 @@ class UsuarioRepositoryTest {
 
         // THEN
         assertTrue(resultado.isFailure)
-        assertEquals("El correo ya existe", resultado.exceptionOrNull()?.message)
+        assertEquals("El correo ya existe localmente", resultado.exceptionOrNull()?.message)
 
         verify(usuarioDao, never()).registrarUsuario(any())
     }

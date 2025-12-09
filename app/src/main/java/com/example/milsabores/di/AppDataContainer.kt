@@ -29,7 +29,7 @@ class AppDataContainer(
     }
 
     // A. La URL Base
-    private val baseUrl = "https://692e22c591e00bafccd2f95a.mockapi.io/api/v1/"
+    private val baseUrl = "https://6937c8844618a71d77cd9589.mockapi.io/api/v1/"
 
     // B. Moshi (El traductor de JSON)
     private val moshi = Moshi.Builder()
@@ -81,6 +81,9 @@ class AppDataContainer(
     override var ultimaCompra: DatosCompra? = null
 
     override val usuarioRepository: UsuarioRepository by lazy {
-        UsuarioRepositoryImpl(database.usuarioDao())
+        UsuarioRepositoryImpl(
+            dao = database.usuarioDao(),
+            api = retrofitService
+        )
     }
 }

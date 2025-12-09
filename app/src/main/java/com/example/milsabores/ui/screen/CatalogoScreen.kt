@@ -1,14 +1,6 @@
 package com.example.milsabores.ui.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -17,6 +9,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -46,20 +42,18 @@ fun CatalogoScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Nuestro Catálogo", fontFamily = MaterialTheme.typography.titleLarge.fontFamily) },
+                title = { Text("Nuestro Catálogo") },
                 navigationIcon = {
                     IconButton(onClick = onVolverClick) {
                         Icon(Icons.Default.ArrowBack, "Volver")
                     }
                 },
                 actions = {
-                    Row {
-                        IconButton(onClick = onPerfilClick) {
-                            Icon(Icons.Filled.AccountCircle, "Mi Perfil")
-                        }
-                        IconButton(onClick = onCarritoClick) {
-                            Icon(Icons.Filled.ShoppingCart, "Carrito")
-                        }
+                    IconButton(onClick = onPerfilClick) {
+                        Icon(Icons.Filled.AccountCircle, "Mi Perfil")
+                    }
+                    IconButton(onClick = onCarritoClick) {
+                        Icon(Icons.Filled.ShoppingCart, "Carrito")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -72,55 +66,116 @@ fun CatalogoScreen(
         }
     ) { paddingValues ->
 
-        // Si está cargando, muestra la rueda
-        if (uiState.estaCargando) {
-            Box(Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        }
-        // Si hay un error, muéstralo
-        else if (uiState.error != null) {
-            Box(Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
-                Text("Error: ${uiState.error}")
-            }
-        }
-        // Si todo va bien, muestra el contenido
-        else {
-            Column(Modifier.padding(paddingValues)) {
+        Column(Modifier.padding(paddingValues)) {
 
-                // --- 1. LOS BOTONES DE FILTRO (<section class="filtros-section">) ---
+            // --- SECCIÓN 1: BARRA DE BÚSQUEDA ---
+            OutlinedTextField(
+                value = uiState.busqueda,
+                onValueChange = { viewModel.actualizarBusqueda(it) }, // ¡Conectado al ViewModel!
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                placeholder = { Text("Buscar pastel...") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                trailingIcon = {
+                    if (uiState.busqueda.isNotEmpty()) {
+                        IconButton(onClick = { viewModel.actualizarBusqueda("") }) {
+                            Icon(Icons.Default.Close, "Borrar búsqueda")
+                        }
+                    }
+                },
+                singleLine = true
+            )
+
+            // --- SECCIÓN 2: FILTROS (Categoría y Precio) ---
+            Column(Modifier.padding(horizontal = 16.dp)) {
+
+                // A. Filtros de Categoría (LazyRow)
+                Text("Categorías:", style = MaterialTheme.typography.labelMedium)
                 LazyRow(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(vertical = 8.dp)
                 ) {
                     items(uiState.categorias) { categoria ->
                         FilterChip(
                             selected = categoria == uiState.categoriaSeleccionada,
-                            onClick = { viewModel.filtrarPorCategoria(categoria) },
-                            label = { Text(formatearNomeCategoria(categoria)) }                        )
+                            // AQUÍ ESTABA EL ERROR: Cambiamos filtrarPorCategoria -> actualizarCategoria
+                            onClick = { viewModel.actualizarCategoria(categoria) },
+                            label = { Text(formatearNomeCategoria(categoria)) }
+                        )
                     }
                 }
 
-                // --- 2. LA CUADRÍCULA DE PRODUCTOS (<div class="productos-grid">) ---
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(160.dp), // Cuadrícula adaptable (aprox. 2 columnas)
-                    contentPadding = PaddingValues(8.dp)
+                // B. Filtros de Orden (Precio) - AHORA CON SCROLL (LazyRow)
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 8.dp) // Un poco de aire arriba y abajo
                 ) {
-                    // Si no hay productos para ese filtro, muestra un mensaje
+                    // Elemento 1: La Etiqueta
+                    item {
+                        Text("Ordenar por precio:", style = MaterialTheme.typography.labelMedium)
+                    }
+
+                    // Elemento 2: Botón Barato
+                    item {
+                        FilterChip(
+                            selected = uiState.ordenAscendente == true,
+                            onClick = { viewModel.actualizarOrden(true) },
+                            label = { Text("Menor") },
+                            leadingIcon = { Icon(Icons.Default.KeyboardArrowUp, null) }
+                        )
+                    }
+
+                    // Elemento 3: Botón Caro (Mayor)
+                    item {
+                        FilterChip(
+                            selected = uiState.ordenAscendente == false,
+                            onClick = { viewModel.actualizarOrden(false) },
+                            label = { Text("Mayor") },
+                            leadingIcon = { Icon(Icons.Default.KeyboardArrowDown, null) }
+                        )
+                    }
+
+                    // Elemento 4: Botón Limpiar (Solo aparece si hay orden)
+                    if (uiState.ordenAscendente != null) {
+                        item {
+                            IconButton(onClick = { viewModel.actualizarOrden(null) }) {
+                                Icon(Icons.Default.Close, "Quitar orden")
+                            }
+                        }
+                    }
+                }
+            }
+
+            Divider(Modifier.padding(vertical = 8.dp))
+
+            // --- SECCIÓN 3: RESULTADOS ---
+            if (uiState.estaCargando) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else if (uiState.error != null) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Error de conexión: ${uiState.error}")
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(150.dp),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
                     if (uiState.productos.isEmpty()) {
                         item {
                             Text(
-                                "No se encontraron productos para esta categoría.",
+                                "No encontramos productos con esos filtros :(",
                                 modifier = Modifier.padding(16.dp),
                                 textAlign = TextAlign.Center
                             )
                         }
                     } else {
-                        // Si hay productos, los mostramos
-                        items(
-                            items = uiState.productos,
-                            key = { producto -> producto.id }
-                        ) { producto ->
+                        items(items = uiState.productos, key = { it.id }) { producto ->
                             ProductoCard(
                                 producto = producto,
                                 onProductoClick = { onProductoClick(producto.id) }
@@ -132,8 +187,8 @@ fun CatalogoScreen(
         }
     }
 }
+
 private fun formatearNomeCategoria(slug: String): String {
-    return slug.split('-') // Separa por guion: ["tortas", "cuadradas"]
+    return if (slug == "todos") "Todos" else slug.split('-')
         .joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
-    // Une con espacio y pone la primera letra de cada parte en mayúscula
 }
